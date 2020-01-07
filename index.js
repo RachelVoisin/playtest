@@ -13,10 +13,7 @@ var bodyParser = require("body-parser"),
 // express-session is required below 
 
 // MODELS
-// var User = require("./models/user"),
-//     Deck = require("./models/deck"),
-// 	Card = require("./models/card"),
-// 	Wish = require("./models/wish");
+var User = require("./models/user");
 
 //var middleware = require("./middleware");
 
@@ -31,7 +28,7 @@ var bodyParser = require("body-parser"),
 
 const PORT = process.env.PORT || 3000
 
-//mongoose.connect("mongodb://localhost/juice_app");
+mongoose.connect("mongodb://localhost/playtest");
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public")); // for a shortcut to the public folder
@@ -47,9 +44,9 @@ app.use(require("express-session")({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-// passport.use(new LocalStrategy(User.authenticate()));
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
 //middleware used on every route call 
@@ -57,6 +54,7 @@ app.use(function (req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.error = req.flash("error");
     res.locals.success = req.flash("success");
+    res.locals.baseUrl = "http://localhost:3000";
     next();
 });
 
@@ -66,6 +64,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/register", function (req, res) {
+    // no such file (yet)
     var username = req.query.username;
     res.render("register", {username: username});
 });
