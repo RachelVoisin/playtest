@@ -1,5 +1,4 @@
 // DEPENDENCIES 
-
 var express = require("express");
 var app = express();
 
@@ -17,14 +16,10 @@ var User = require("./models/user");
 
 //var middleware = require("./middleware");
 
-
 //var seedDB = require("./seeds");
 //seedDB();
 
-// require routes files
-// var mtgRoutes = require("./routes/mtg"),
-//     wishlistRoutes = require("./routes/wishlist");
-
+// var mtgRoutes = require("./routes/mtg");
 
 const PORT = process.env.PORT || 3000
 
@@ -35,8 +30,6 @@ app.use(express.static(__dirname + "/public")); // for a shortcut to the public 
 app.use(methodOverride("_method")); // for PUT and DELETE
 app.use(flash());
 app.use(sanitizer());
-
-
 app.use(require("express-session")({
     secret: "Freesh Ava Cadoo",
     resave: false,
@@ -48,7 +41,6 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 
 //middleware used on every route call 
 app.use(function (req, res, next) {
@@ -110,6 +102,5 @@ app.get("/logout", function (req, res) {
 
 // app.use routes files
 // app.use(mtgRoutes);
-// app.use(wishlistRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
