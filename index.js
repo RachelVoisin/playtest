@@ -40,7 +40,8 @@ app.use(sanitizer());
 app.use(require("express-session")({
     secret: "Freesh Ava Cadoo",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {expires: new Date(253402300000000)}
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -64,18 +65,22 @@ app.get("/", function (req, res) {
 });
 
 app.get("/register", function (req, res) {
-    // no such file (yet)
     var username = req.query.username;
-    res.render("register", {username: username});
+    res.render("account/register", {username: username});
 });
 
 app.post("/register", function (req, res) {
+    var username = req.body.username;
     if (req.body.password === req.body.password2) {
         var newUser = new User({ username: req.body.username });
         User.register(newUser, req.body.password, function (err, user) {
             if (err) {
                 req.flash("error", err.message);
-                res.redirect("/register");
+                if (username && username != "") {
+                    res.redirect("/register?username=" + encodeURIComponent(username));
+                } else {
+                    res.redirect("/register");
+                }
             }
             passport.authenticate("local")(req, res, function () {
                 req.flash("success", "Account created! Welcome!");
@@ -84,8 +89,7 @@ app.post("/register", function (req, res) {
         });
     } else {
         req.flash("error", "Passwords don't match");
-        var username = encodeURIComponent(req.username);
-        res.redirect("/register?username=" + username);
+        res.redirect("/register?username=" + encodeURIComponent(username));
     }
 });
 

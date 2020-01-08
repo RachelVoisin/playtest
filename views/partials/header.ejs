@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf=8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Play Test</title>
+</head>
+<body>
+	<% if(currentUser){ %>
+		<p>Signed in as <%= currentUser.username %></p>
+	<% } %>
+	<% if(error && error.length > 0){ %>
+		<div role="alert">
+			<%= error %>
+		</div>
+	<% } if(success && success.length > 0){ %>
+		<div role="alert">
+			<%= success %>
+		</div>
+	<% } %>
