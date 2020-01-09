@@ -17,6 +17,7 @@ var deckSchema = new mongoose.Schema({
                 cut: Boolean,
                 buy: Boolean,
                 name: String,
+                number: Number,
                 id: {
                     type: mongoose.Schema.Types.ObjectId,
 				    ref: "Card"	
@@ -31,5 +32,7 @@ var deckSchema = new mongoose.Schema({
         }		
     }]
 });
+
+// date should be saved as universal and formatted at output 
 
 module.exports = mongoose.model("Deck", deckSchema);
