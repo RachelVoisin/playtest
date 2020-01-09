@@ -48,7 +48,6 @@ router.post("/deck/new", function(req, res){
 
 router.get("/deck/:id/edit", function(req, res){
 	Deck.findById(req.params.id)
-	.populate("deckCards").populate("maybeCards")
 	.exec(function(err, foundDeck){
 		if(err){
 			console.log(err);
@@ -61,6 +60,10 @@ router.get("/deck/:id/edit", function(req, res){
 			res.render("deck/view", {deck: foundDeck, deckCards: sortedDeck, maybeCards: sortedMaybeBoard});				
 		}
 	});
+});
+
+router.post("/deck/:id/add", function(req, res) {
+    //add card to deck 
 });
 
 module.exports = router;
