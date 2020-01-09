@@ -19,7 +19,7 @@ var User = require("./models/user");
 //var seedDB = require("./seeds");
 //seedDB();
 
-// var mtgRoutes = require("./routes/mtg");
+var deckRoutes = require("./routes/deck");
 
 const PORT = process.env.PORT || 3000
 
@@ -101,6 +101,6 @@ app.get("/logout", function (req, res) {
 });
 
 // app.use routes files
-// app.use(mtgRoutes);
+app.use(deckRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
