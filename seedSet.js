@@ -24,6 +24,9 @@ request.onreadystatechange = function () {
                     // add new card
                 }
             });
+
+            // check for a next page and repeat 
+            // probably all the meat should be moved into function to avoid repeat
         }
     }
     if(request.status === 429){

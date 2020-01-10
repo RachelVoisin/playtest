@@ -5,12 +5,6 @@
 <p><%= deck.dateUpdated %></p>
 <div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
 
-<form action="/deck/:id/add" method="POST">
-    <input type="text" name="name" placeholder="Card Name">
-    <input type="submit" value="Add Card">
-    <!-- preform actions using ajax! -->
-</form>
-
 <div>
     <% deck.deckCards.forEach(function(card){ %>
         <p>card.name</p>

@@ -12,7 +12,8 @@ var bodyParser = require("body-parser"),
 // express-session is required below 
 
 // MODELS
-var User = require("./models/user");
+var User = require("./models/user"),
+    Deck = require("./models/deck");
 
 //var middleware = require("./middleware");
 
@@ -52,8 +53,24 @@ app.use(function (req, res, next) {
 });
 
 app.get("/", function (req, res) {
-    //show user's decks
-    res.render("home", {});
+    if (req.user) {
+        Deck.find({ 'author.id' : req.user }, function(err, usersDecks) {
+            if(err){
+                console.log(err);
+            } else {
+                res.render("home", {decks: usersDecks});
+            }
+        });
+    } else {
+        Deck.find({}).sort({dateUpdated: 1}).limit(5).exec(function(err, recentDecks){
+            if(err){
+                console.log(err);
+            } else {
+                console.log(typeof(recentDecks));
+                res.render("home", {decks: recentDecks});
+            }
+        });
+    }
 });
 
 app.get("/register", function (req, res) {

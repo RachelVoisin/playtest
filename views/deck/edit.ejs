@@ -1,0 +1,32 @@
+<%- include('../partials/header'); %>
+
+<p><%= deck.name %></p>
+<p><%= deck.format %></p>
+<p><%= deck.dateUpdated %></p>
+<div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
+
+<form action="/deck/<%= deck._id %>/add" method="POST">
+    <input type="text" name="name" placeholder="Card Name">
+    <input type="submit" value="Add Card">
+    <!-- preform actions using ajax! -->
+
+
+    <!--document.getElementById('foo').onkeypress = function(e){
+    if (!e) e = window.event;
+    var keyCode = e.keyCode || e.which;
+    if (keyCode == '13'){
+      // Enter pressed
+      return false;
+    }
+  }-->
+</form>
+
+<div>
+    <% deck.deckCards.forEach(function(card){ %>
+        <p><%= card.name %></p>
+    <% }); %>
+</div>
+
+<!-- <script src="/scripts/deck-actions.js"></script> -->
+
+<%- include('../partials/footer'); %>
