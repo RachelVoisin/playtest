@@ -1,0 +1,14 @@
+<%- include('../partials/header'); %>
+
+<p><%= deck.name %></p>
+<p><%= deck.format %></p>
+<p><%= deck.dateUpdated %></p>
+<div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
+
+<div>
+    <% deck.deckCards.forEach(function(card){ %>
+        <p>card.name</p>
+    <% }); %>
+</div>
+
+<%- include('../partials/footer'); %>

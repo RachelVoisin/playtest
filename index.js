@@ -1,5 +1,4 @@
 // DEPENDENCIES 
-
 var express = require("express");
 var app = express();
 
@@ -13,18 +12,15 @@ var bodyParser = require("body-parser"),
 // express-session is required below 
 
 // MODELS
-var User = require("./models/user");
+var User = require("./models/user"),
+    Deck = require("./models/deck");
 
 //var middleware = require("./middleware");
-
 
 //var seedDB = require("./seeds");
 //seedDB();
 
-// require routes files
-// var mtgRoutes = require("./routes/mtg"),
-//     wishlistRoutes = require("./routes/wishlist");
-
+var deckRoutes = require("./routes/deck");
 
 const PORT = process.env.PORT || 3000
 
@@ -35,8 +31,6 @@ app.use(express.static(__dirname + "/public")); // for a shortcut to the public 
 app.use(methodOverride("_method")); // for PUT and DELETE
 app.use(flash());
 app.use(sanitizer());
-
-
 app.use(require("express-session")({
     secret: "Freesh Ava Cadoo",
     resave: false,
@@ -49,7 +43,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
 //middleware used on every route call 
 app.use(function (req, res, next) {
     res.locals.currentUser = req.user;
@@ -60,8 +53,24 @@ app.use(function (req, res, next) {
 });
 
 app.get("/", function (req, res) {
-    //show user's decks
-    res.render("home", {});
+    if (req.user) {
+        Deck.find({ 'author.id' : req.user }, function(err, usersDecks) {
+            if(err){
+                console.log(err);
+            } else {
+                res.render("home", {decks: usersDecks});
+            }
+        });
+    } else {
+        Deck.find({}).sort({dateUpdated: 1}).limit(5).exec(function(err, recentDecks){
+            if(err){
+                console.log(err);
+            } else {
+                console.log(typeof(recentDecks));
+                res.render("home", {decks: recentDecks});
+            }
+        });
+    }
 });
 
 app.get("/register", function (req, res) {
@@ -109,7 +118,6 @@ app.get("/logout", function (req, res) {
 });
 
 // app.use routes files
-// app.use(mtgRoutes);
-// app.use(wishlistRoutes);
+app.use(deckRoutes);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));

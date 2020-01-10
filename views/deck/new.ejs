@@ -1,0 +1,18 @@
+<%- include('../partials/header'); %>
+
+<form action="/deck/new" method="POST">
+    <input type="text" name="name" placeholder="Deck Name">
+    <input type="text" name="image" placeholder="Featured Image Url">
+    <label for="color">
+        Featured Color
+    </label>
+    <input type="color" name="color" value="#edc112">
+    <select name="format">
+        <option value="EDH/Commander">EDH/Commander</option>
+        <option value="Standard">Standard</option>
+        <option value="Modern">Modern</option>
+    </select>
+    <input type="submit" value="Submit">
+</form>
+
+<%- include('../partials/footer'); %>

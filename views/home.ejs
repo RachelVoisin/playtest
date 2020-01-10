@@ -5,6 +5,25 @@
     <input type="password" name="password" placeholder="password">
     <input type="submit" value="Login">
 </form>
+
 <a href="<%= baseUrl %>/register">Register</a>
+
+<a href="<%= baseUrl %>/deck/new">+ New Deck</a>
+
+<% if (currentUser && (!decks || decks.length == 0)) { %>
+    <p>You have not created any decks!</p>
+<% } else if (!decks || decks.length == 0) { %>
+    <p>There are no decks on this website!</p>
+<% } else if (currentUser && decks && decks.length > 0) { %>
+    <p>Your Decks</p>
+    <% decks.forEach(function(deck) { %>
+        <a href="<%= baseUrl %>/deck/<%= deck._id %>/edit"><%= deck.name %></a>
+    <% }); %>
+<% } else if (decks && decks.length > 0) { %>
+    <p>Browse our most recent decks or sign in to create your own.</p>
+    <% decks.forEach(function(deck) { %>
+        <a href="<%= baseUrl %>/deck/<%= deck._id %>"><%= deck.name %></a>
+    <% }); %>
+<% } %>
 
 <%- include('./partials/footer'); %>
