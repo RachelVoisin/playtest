@@ -21,11 +21,33 @@
   }-->
 </form>
 
-<div>
+<select name="actions">
+    <option value="remove">Delete</option>
+    <option value="maybe">Move to Maybeboard</option>
+    <option value="cut">Mark as Cuttable</option>
+    <option value="buy">Mark as Not Owned</option>
+</select>   
+<button onclick="submitAction()">Go!</button> 
+
+<table>
     <% deck.deckCards.forEach(function(card){ %>
-        <p><%= card.name %></p>
+        <tr>
+            <td>
+                <input type="checkbox" value="<%= card.id %>">
+            </td>
+            <td><input type="number" value="<%= card.number %>" id="<%= card.id %>"></td>
+            <td><%= card.name %></td>
+            <td>
+                <% if (card.cut) { %>
+                    <span>Cut</span>
+                <% } %>
+                <% if (card.buy) { %>
+                    <span>Not Owned</span>
+                <% } %>
+            </td>
+        </tr>
     <% }); %>
-</div>
+</table>
 
 <!-- <script src="/scripts/deck-actions.js"></script> -->
 

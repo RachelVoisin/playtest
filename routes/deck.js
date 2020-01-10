@@ -75,7 +75,11 @@ router.get("/deck/:id/edit", function(req, res){
 			res.redirect("/");
 		} else {
 			foundDeck.deckCards.objSort("name");
-			foundDeck.maybeCards.objSort("name");
+            foundDeck.maybeCards.objSort("name");
+            
+            // send an array of objects containing subtitle and array of cards 
+
+            // include option to show all cards in all applicable categories 
 
 			res.render("deck/edit", {deck: foundDeck});				
 		}
@@ -84,6 +88,8 @@ router.get("/deck/:id/edit", function(req, res){
 
 // Add Card to Deck
 router.post("/deck/:id/add", function(req, res) {
+    // check if card is already there, uptick number, not add again!
+
     Deck.findById(req.params.id)
 	.exec(function(err, foundDeck){
 		if(err){
@@ -115,5 +121,88 @@ router.post("/deck/:id/add", function(req, res) {
 		}
 	});
 });
+
+function renderCardList(req, deck) {
+    deck.deckCards.objSort("name");
+    deck.maybeCards.objSort("name");
+
+    var sort = req.query.sort || "type";
+    var overlap = req.query.overlap ? true : false;
+
+    var deckCards = [];
+    var sorter = "";
+
+    if (sort == "type") {
+        sorter = ["Creature", "Enchantment", "Artifact", "Instant", "Land", "Planeswalker", "Sorcery"];
+        sorter.forEach(function(type) {
+            var section = {
+                subtitle: type,
+                cards: []
+            };
+            deck.deckCards.forEach(function(card, index) {
+                // populate cards?
+                if (card.types.includes(type)) {
+                    section.cards.push(card);
+    
+                    if(overlap == false) {
+                        deck.cards.splice(index, 1);
+                    }
+                }
+            });
+    
+            if (section.cards.length > 0) {
+                deckCards.push(section);
+            }
+        });
+    } else if (sort == "cmc") {
+        sorter = [];
+
+        deck.deckCards.forEach(function(card) {
+            // populate cards?
+            if (!sorter.includes(card.cmc)) {
+                sorter.push(card.cmc);
+            }
+        });
+
+        sorter.forEach(function(type) {
+            var section = {
+                subtitle: type,
+                cards: []
+            };
+            
+            deck.deckCards.forEach(function(card) {
+                // populate cards?
+                if (card.cmc == type) {
+                    section.cards.push(card);
+                }
+            });
+
+            deckCards.push(section);
+        });
+
+    } else if (sort == "color") {
+        // gotta change card model
+        sorter = ["White", "Blue", "Black", "Red", "Green", "Colorless"];
+        sorter.forEach(function(type) {
+            var section = {
+                subtitle: type,
+                cards: []
+            };
+            
+            deck.deckCards.forEach(function(card) {
+                // populate cards?
+                if (card.manaSymbols[type] > 0) {
+                    section.cards.push(card);
+                }
+            });
+
+            if (section.cards.length > 0) {
+                deckCards.push(section);
+            }
+        });
+    }
+    
+    return deckCards;
+}
 
 module.exports = router;
