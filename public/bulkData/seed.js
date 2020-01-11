@@ -5,7 +5,7 @@ mongoose.connect("mongodb://localhost/playtest");
 
 // https://archive.scryfall.com/json/scryfall-oracle-cards.json   download the file and put it in root
 
-var Card = require("./models/card");
+var Card = require("../../models/card");
 	
 Card.remove({}, function(err){
 	if(err){

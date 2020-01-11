@@ -3,7 +3,8 @@ var router = express.Router();
 
 var dateFormat = require("dateformat");
 
-var objSort = require("../public/scripts/objSort");
+var objSort    = require("../public/scripts/objSort");
+var middleware = require("../middleware");
 
 var User = require("../models/user"),
     Deck = require("../models/deck"),
@@ -12,13 +13,12 @@ var User = require("../models/user"),
 //var middleware = require("../middleware"); // contents of index.js is automatically required if you require a directory
 
 // Create New Deck Page
-router.get("/deck/new", function(req, res){
-    //check if logged in 
+router.get("/deck/new", middleware.isLoggedIn, function(req, res){ 
     res.render("deck/new.ejs", {});
 });
 
 // Create New Deck
-router.post("/deck/new", function(req, res){
+router.post("/deck/new", middleware.isLoggedIn, function(req, res){
     var name        = req.body.name,
 	    image       = req.body.image,
         color       = req.body.color,
@@ -66,7 +66,7 @@ router.get("/deck/:id", function(req, res){
 });
 
 // Edit Deck Page
-router.get("/deck/:id/edit", function(req, res){
+router.get("/deck/:id/edit", middleware.checkDeckOwnership, function(req, res){
 	Deck.findById(req.params.id)
 	.exec(function(err, foundDeck){
 		if(err){
@@ -77,19 +77,13 @@ router.get("/deck/:id/edit", function(req, res){
 			foundDeck.deckCards.objSort("name");
             foundDeck.maybeCards.objSort("name");
             
-            // send an array of objects containing subtitle and array of cards 
-
-            // include option to show all cards in all applicable categories 
-
 			res.render("deck/edit", {deck: foundDeck});				
 		}
 	});
 });
 
 // Add Card to Deck
-router.post("/deck/:id/add", function(req, res) {
-    // check if card is already there, uptick number, not add again!
-
+router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
     Deck.findById(req.params.id)
 	.exec(function(err, foundDeck){
 		if(err){
@@ -104,105 +98,37 @@ router.post("/deck/:id/add", function(req, res) {
 					req.flash("error", "Could not find card with that name.");
 					res.redirect("/deck/" + foundDeck._id + "/edit");
 				} else {
-                    var newCard = {
-                        cut: false,
-                        buy: false,
-                        name: foundCard.name,
-                        number: 1,
-                        id: foundCard._id
-                    }
+                    var duplicate = false;
+                    foundDeck.deckCards.forEach(function(card) {
+                        if (card.name == foundCard.name) {
+                            card.number += 1;
+                            duplicate = true;
+                        }
+                    });
 
-                    foundDeck.deckCards.push(newCard);
-					foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
-					foundDeck.save();
-					res.redirect("/deck/" + foundDeck._id + "/edit");
+                    if (duplicate) {
+                        foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
+                        foundDeck.save();
+
+                        res.redirect("/deck/" + foundDeck._id + "/edit");
+                    } else {
+                        var newCard = {
+                            cut: false,
+                            buy: false,
+                            name: foundCard.name,
+                            number: 1,
+                            id: foundCard._id
+                        }
+    
+                        foundDeck.deckCards.push(newCard);
+                        foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
+                        foundDeck.save();
+                        res.redirect("/deck/" + foundDeck._id + "/edit");
+                    }
 				}
 			});					
 		}
 	});
 });
-
-function renderCardList(req, deck) {
-    deck.deckCards.objSort("name");
-    deck.maybeCards.objSort("name");
-
-    var sort = req.query.sort || "type";
-    var overlap = req.query.overlap ? true : false;
-
-    var deckCards = [];
-    var sorter = "";
-
-    if (sort == "type") {
-        sorter = ["Creature", "Enchantment", "Artifact", "Instant", "Land", "Planeswalker", "Sorcery"];
-        sorter.forEach(function(type) {
-            var section = {
-                subtitle: type,
-                cards: []
-            };
-            deck.deckCards.forEach(function(card, index) {
-                // populate cards?
-                if (card.types.includes(type)) {
-                    section.cards.push(card);
-    
-                    if(overlap == false) {
-                        deck.cards.splice(index, 1);
-                    }
-                }
-            });
-    
-            if (section.cards.length > 0) {
-                deckCards.push(section);
-            }
-        });
-    } else if (sort == "cmc") {
-        sorter = [];
-
-        deck.deckCards.forEach(function(card) {
-            // populate cards?
-            if (!sorter.includes(card.cmc)) {
-                sorter.push(card.cmc);
-            }
-        });
-
-        sorter.forEach(function(type) {
-            var section = {
-                subtitle: type,
-                cards: []
-            };
-            
-            deck.deckCards.forEach(function(card) {
-                // populate cards?
-                if (card.cmc == type) {
-                    section.cards.push(card);
-                }
-            });
-
-            deckCards.push(section);
-        });
-
-    } else if (sort == "color") {
-        // gotta change card model
-        sorter = ["White", "Blue", "Black", "Red", "Green", "Colorless"];
-        sorter.forEach(function(type) {
-            var section = {
-                subtitle: type,
-                cards: []
-            };
-            
-            deck.deckCards.forEach(function(card) {
-                // populate cards?
-                if (card.manaSymbols[type] > 0) {
-                    section.cards.push(card);
-                }
-            });
-
-            if (section.cards.length > 0) {
-                deckCards.push(section);
-            }
-        });
-    }
-    
-    return deckCards;
-}
 
 module.exports = router;

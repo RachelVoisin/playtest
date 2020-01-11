@@ -5,8 +5,8 @@
 <p><%= deck.dateUpdated %></p>
 <div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
 
-<form action="/deck/<%= deck._id %>/add" method="POST">
-    <input type="text" name="name" placeholder="Card Name">
+<form class="autocomplete" action="/deck/<%= deck._id %>/add" method="POST" autocomplete="OFF">
+    <input id="cardInput" type="text" name="name" placeholder="Card Name">
     <input type="submit" value="Add Card">
     <!-- preform actions using ajax! -->
 
@@ -50,5 +50,12 @@
 </table>
 
 <!-- <script src="/scripts/deck-actions.js"></script> -->
+
+<script src="/scripts/autocomplete.js"></script>
+<script src="/bulkData/cardsList.js"></script>
+
+<script>
+	autocomplete(document.getElementById("cardInput"), data);
+</script>
 
 <%- include('../partials/footer'); %>

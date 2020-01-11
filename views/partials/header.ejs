@@ -3,7 +3,35 @@
 <head>
 	<meta charset="utf=8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Play Test</title>
+	<title>Play Test</title>
+	<style>
+		.autocomplete {
+			position: relative;
+		}
+		.autocomplete-items {
+			position: absolute;
+			border: 1px solid #d4d4d4;
+			border-bottom: none;
+			border-top: none;
+			z-index: 99;
+			top: 100%;
+			left: 0;
+			right: 0;
+		}
+		.autocomplete-items div {
+			padding: 10px;
+			cursor: pointer;
+			background-color: #fff; 
+			border-bottom: 1px solid #d4d4d4; 
+		}
+		.autocomplete-items div:hover {
+			background-color: #e9e9e9; 
+		}
+		.autocomplete-active {
+			background-color: #00b5ad !important; 
+			color: #fff; 
+		}
+	</style>
 </head>
 <body>
 	<% if(currentUser){ %>
