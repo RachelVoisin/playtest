@@ -82,6 +82,11 @@ router.get("/deck/:id/edit", middleware.checkDeckOwnership, function(req, res){
 	});
 });
 
+// Edit Deck Details
+router.post("/deck/:id/edit", middleware.checkDeckOwnership, function(req, res){
+	
+});
+
 // Add Card to Deck
 router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
     Deck.findById(req.params.id)
@@ -95,8 +100,14 @@ router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
 				if(err){
 					console.log(err);
 				} else if(!foundCard){
-					req.flash("error", "Could not find card with that name.");
-					res.redirect("/deck/" + foundDeck._id + "/edit");
+					//req.flash("error", "Could not find card with that name.");
+                    //res.redirect("/deck/" + foundDeck._id + "/edit");
+                    res.send(JSON.stringify(
+                        {
+                            status: "error",
+                            message: "Could not find card with that name."
+                        }
+                    ));
 				} else {
                     var duplicate = false;
                     foundDeck.deckCards.forEach(function(card) {
@@ -109,8 +120,14 @@ router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
                     if (duplicate) {
                         foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
                         foundDeck.save();
-
-                        res.redirect("/deck/" + foundDeck._id + "/edit");
+                        //res.redirect("/deck/" + foundDeck._id + "/edit");
+                        res.send(JSON.stringify(
+                            {
+                                status: "success",
+                                duplicate: true,
+                                card: foundCard
+                            }
+                        ));
                     } else {
                         var newCard = {
                             cut: false,
@@ -123,12 +140,29 @@ router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
                         foundDeck.deckCards.push(newCard);
                         foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
                         foundDeck.save();
-                        res.redirect("/deck/" + foundDeck._id + "/edit");
+                        //res.redirect("/deck/" + foundDeck._id + "/edit");
+
+                        res.send(JSON.stringify(
+                            {
+                                status: "success",
+                                duplicate: false,
+                                card: foundCard
+                            }
+                        ));
                     }
 				}
 			});					
 		}
 	});
+});
+
+// Card Actions
+router.post("/deck/:id/edit/cards", middleware.checkDeckOwnership, function(req, res) {
+    // remove
+    // move
+    // cut
+    // buy
+    // update number
 });
 
 module.exports = router;

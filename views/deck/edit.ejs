@@ -1,24 +1,19 @@
 <%- include('../partials/header'); %>
 
-<p><%= deck.name %></p>
-<p><%= deck.format %></p>
-<p><%= deck.dateUpdated %></p>
-<div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
+<div class="deckDetails">
+    <p><%= deck.name %></p>
+    <p><%= deck.format %></p>
+    <p><%= deck.dateUpdated %></p>
+    <div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
+</div>
 
-<form class="autocomplete" action="/deck/<%= deck._id %>/add" method="POST" autocomplete="OFF">
-    <input id="cardInput" type="text" name="name" placeholder="Card Name">
-    <input type="submit" value="Add Card">
-    <!-- preform actions using ajax! -->
+<div class="deckDetailsEdit">
+    
+</div>
 
-
-    <!--document.getElementById('foo').onkeypress = function(e){
-    if (!e) e = window.event;
-    var keyCode = e.keyCode || e.which;
-    if (keyCode == '13'){
-      // Enter pressed
-      return false;
-    }
-  }-->
+<form class="autocomplete jsAddCardForm" action="/deck/<%= deck._id %>/add" method="POST" autocomplete="OFF">
+    <input id="cardInput" class="jsAddCardText" type="text" name="name" placeholder="Card Name">
+    <button class="jsAddCardBtn">Add Card</button>
 </form>
 
 <select name="actions">
@@ -29,13 +24,13 @@
 </select>   
 <button onclick="submitAction()">Go!</button> 
 
-<table>
+<table class="jsCardList">
     <% deck.deckCards.forEach(function(card){ %>
         <tr>
             <td>
                 <input type="checkbox" value="<%= card.id %>">
             </td>
-            <td><input type="number" value="<%= card.number %>" id="<%= card.id %>"></td>
+            <td><input type="number" value="<%= card.number %>" class="js<%= card.id %>Number"></td>
             <td><%= card.name %></td>
             <td>
                 <% if (card.cut) { %>
@@ -49,13 +44,13 @@
     <% }); %>
 </table>
 
-<!-- <script src="/scripts/deck-actions.js"></script> -->
-
 <script src="/scripts/autocomplete.js"></script>
 <script src="/bulkData/cardsList.js"></script>
-
 <script>
 	autocomplete(document.getElementById("cardInput"), data);
 </script>
+
+<script src="/scripts/knockout-3.5.1.js"></script>
+<script src="/scripts/deck-actions.js"></script>
 
 <%- include('../partials/footer'); %>

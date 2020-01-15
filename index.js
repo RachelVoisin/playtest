@@ -113,7 +113,7 @@ app.get("/logout", function (req, res) {
 
 app.use(deckRoutes);
 
-app.get('*',function (req, res) {
+app.get('*', function (req, res) {
     res.redirect('/');
 });
 

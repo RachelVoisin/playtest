@@ -3,7 +3,7 @@ var mongoose = require("mongoose"),
 
 mongoose.connect("mongodb://localhost/playtest");
 
-// https://archive.scryfall.com/json/scryfall-oracle-cards.json   download the file and put it in root
+// https://archive.scryfall.com/json/scryfall-oracle-cards.json   download the file and put it in bulkData
 
 var Card = require("../../models/card");
 	
