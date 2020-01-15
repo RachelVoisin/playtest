@@ -49,7 +49,7 @@ router.post("/deck/new", middleware.isLoggedIn, function(req, res){
 });
 
 // View Deck Page
-router.get("/deck/:id", function(req, res){
+router.get("/deck/view/:id", function(req, res){
 	Deck.findById(req.params.id)
 	.exec(function(err, foundDeck){
 		if(err){
@@ -66,48 +66,60 @@ router.get("/deck/:id", function(req, res){
 });
 
 // Edit Deck Page
-router.get("/deck/:id/edit", middleware.checkDeckOwnership, function(req, res){
-	Deck.findById(req.params.id)
+// Cannot check deck ownership because no req.params.id
+router.get("/deck/edit", function(req, res){
+	res.render("deck/edit");
+});
+
+router.get("/deckapi/getDeck", function(req, res) {
+    Deck.findById(req.query.id)
 	.exec(function(err, foundDeck){
 		if(err){
 			console.log(err);
-			req.flash("error", "Could not find deck");
-			res.redirect("/");
-		} else {
+            res.send({
+                status: "error",
+                message: "Could not find deck" 
+            });	
+		} else if(foundDeck){
 			foundDeck.deckCards.objSort("name");
             foundDeck.maybeCards.objSort("name");
-            
-			res.render("deck/edit", {deck: foundDeck});				
-		}
+            res.send({
+                status: "success",
+                data: foundDeck 
+            });			
+		} else {
+            res.send({
+                status: "error",
+                message: "Could not find deck" 
+            });	
+        }
 	});
 });
 
-// Edit Deck Details
-router.post("/deck/:id/edit", middleware.checkDeckOwnership, function(req, res){
-	
-});
-
 // Add Card to Deck
-router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
-    Deck.findById(req.params.id)
+// Cannot check deck ownership because no req.params.id
+router.post("/deckapi/addCard", function(req, res) {
+    Deck.findById(req.body.id)
 	.exec(function(err, foundDeck){
 		if(err){
-			console.log(err);
-			req.flash("error", "Could not find deck");
-			res.redirect("/");
+            console.log(err);
+            res.send({
+                status: "error",
+                message: "Could not find deck" 
+            });	
 		} else {
             Card.findOne({ 'name' : req.body.name }, function(err, foundCard){
 				if(err){
-					console.log(err);
+                    console.log(err);
+                    res.send({
+                        status: "error",
+                        message: "Error: Could not find card with that name: " + req.body.name 
+                    });
 				} else if(!foundCard){
-					//req.flash("error", "Could not find card with that name.");
-                    //res.redirect("/deck/" + foundDeck._id + "/edit");
-                    res.send(JSON.stringify(
-                        {
-                            status: "error",
-                            message: "Could not find card with that name."
-                        }
-                    ));
+                    res.send({
+                        status: "error",
+                        message: "Could not find card with that name: " + req.body.name
+                    });
 				} else {
                     var duplicate = false;
                     foundDeck.deckCards.forEach(function(card) {
@@ -120,14 +132,9 @@ router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
                     if (duplicate) {
                         foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
                         foundDeck.save();
-                        //res.redirect("/deck/" + foundDeck._id + "/edit");
-                        res.send(JSON.stringify(
-                            {
-                                status: "success",
-                                duplicate: true,
-                                card: foundCard
-                            }
-                        ));
+                        res.send({
+                            status: "success"
+                        });
                     } else {
                         var newCard = {
                             cut: false,
@@ -140,20 +147,60 @@ router.post("/deck/:id/add", middleware.checkDeckOwnership, function(req, res) {
                         foundDeck.deckCards.push(newCard);
                         foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
                         foundDeck.save();
-                        //res.redirect("/deck/" + foundDeck._id + "/edit");
-
-                        res.send(JSON.stringify(
-                            {
-                                status: "success",
-                                duplicate: false,
-                                card: foundCard
-                            }
-                        ));
+                        res.send({
+                            status: "success"
+                        });
                     }
 				}
 			});					
 		}
 	});
+});
+
+// Edit Deck Details
+// Cannot check deck ownership because no req.params.id
+router.post("/deckapi/editDetails", function(req, res) {
+    Deck.findById(req.body.id)
+	.exec(function(err, foundDeck){
+        if(err){
+            console.log(err);
+            res.send({
+                status: "error",
+                message: "Could not find deck" 
+            });	
+		} else {
+            foundDeck.name = req.body.name;
+            foundDeck.format = req.body.format;
+            foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
+            foundDeck.save();
+            res.send({
+                status: "success"
+            });
+        }
+    });
+});
+
+// Edit Cards
+// Cannot check deck ownership because no req.params.id
+router.post("/deckapi/editCards", function(req, res) {
+    Deck.findById(req.body.id)
+	.exec(function(err, foundDeck){
+        if(err){
+            console.log(err);
+            res.send({
+                status: "error",
+                message: "Could not find deck" 
+            });	
+		} else {
+            if (req.body.action == "remove") {
+
+            }
+    //         <option value="remove">Delete</option>
+    // <option value="maybe">Move to Maybeboard</option>
+    // <option value="cut">Mark as Cuttable</option>
+    // <option value="buy">Mark as Not Owned</option>
+    //     }
+    });
 });
 
 // Card Actions

@@ -1,53 +1,56 @@
 <%- include('../partials/header'); %>
 
 <div class="deckDetails">
-    <p><%= deck.name %></p>
-    <p><%= deck.format %></p>
-    <p><%= deck.dateUpdated %></p>
-    <div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
+    <p data-bind="text: name"></p>
+    <p data-bind="text: format"></p>
+    <!-- <div style="width:15px;height:15px;background-color:deck.color>;"></div> -->
 </div>
 
 <div class="deckDetailsEdit">
-    
+    <p>Deck Name: <input class="jsDeckName" data-bind="attr: {placeholder: name}" /></p>
+    <p>Format: <select class="jsFormat">
+        <option data-bind="value: format, text: format"></option>
+        <option data-bind="hidden: format() == 'EDH/Commander'" value="EDH/Commander">EDH/Commander</option>
+        <option data-bind="hidden: format() == 'Standard'" value="Standard">Standard</option>
+        <option data-bind="hidden: format() == 'Modern'" value="Modern">Modern</option>
+    </select></p>
+
+    <button data-bind="click: editDetails">Save</button>
+    <button data-bind="click: cancelEditDetails">Cancel</button>
 </div>
 
-<form class="autocomplete jsAddCardForm" action="/deck/<%= deck._id %>/add" method="POST" autocomplete="OFF">
-    <input id="cardInput" class="jsAddCardText" type="text" name="name" placeholder="Card Name">
-    <button class="jsAddCardBtn">Add Card</button>
+<form class="autocomplete jsAddCardForm" autocomplete="OFF">
+    <input id="jsCardInput" type="text" name="name" placeholder="Card Name" data-bind="event: { keyup: enteredName }">
+    <button data-bind="click: addCard">Add Card</button>
 </form>
 
-<select name="actions">
+<select class="jsCardAction">
     <option value="remove">Delete</option>
     <option value="maybe">Move to Maybeboard</option>
     <option value="cut">Mark as Cuttable</option>
     <option value="buy">Mark as Not Owned</option>
 </select>   
-<button onclick="submitAction()">Go!</button> 
+<button data-bind="click: editCards">Go!</button> 
 
-<table class="jsCardList">
-    <% deck.deckCards.forEach(function(card){ %>
-        <tr>
-            <td>
-                <input type="checkbox" value="<%= card.id %>">
-            </td>
-            <td><input type="number" value="<%= card.number %>" class="js<%= card.id %>Number"></td>
-            <td><%= card.name %></td>
-            <td>
-                <% if (card.cut) { %>
-                    <span>Cut</span>
-                <% } %>
-                <% if (card.buy) { %>
-                    <span>Not Owned</span>
-                <% } %>
-            </td>
-        </tr>
-    <% }); %>
+<table>
+	<tbody data-bind="foreach: cards">
+		<tr>
+			<td><input type="checkbox" class="cardCheckbox" data-bind="value: id"></td>
+			<td data-bind="text: amount"></td>
+			<td data-bind="text: name"></td>
+			<td>
+				<span data-bind="text: cut"></span>
+				<span data-bind="text: buy"></span>
+			</td>
+			<!-- <td><a href="#" data-bind="click: $root.removeSeat">Remove</a></td> -->
+		</tr> 
+	</tbody>
 </table>
 
 <script src="/scripts/autocomplete.js"></script>
 <script src="/bulkData/cardsList.js"></script>
 <script>
-	autocomplete(document.getElementById("cardInput"), data);
+	autocomplete(document.getElementById("jsCardInput"), data);
 </script>
 
 <script src="/scripts/knockout-3.5.1.js"></script>
