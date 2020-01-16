@@ -26,20 +26,42 @@
 
 <select class="jsCardAction">
     <option value="remove">Delete</option>
-    <option value="maybe">Move to Maybeboard</option>
+    <option value="move">Move to Maybeboard</option>
     <option value="cut">Mark as Cuttable</option>
     <option value="buy">Mark as Not Owned</option>
 </select>   
 <button data-bind="click: editCards">Go!</button> 
-
 <table>
 	<tbody data-bind="foreach: cards">
-		<tr>
+		<tr data-bind="class: id">
 			<td><input type="checkbox" class="cardCheckbox" data-bind="value: id"></td>
-			<td data-bind="text: amount"></td>
+			<td>
+                <button data-bind="click: $root.increaseCard">+</button>
+                <span data-bind="text: amount"></span>
+                <button data-bind="click: $root.decreaseCard">-</button>
+            </td>
 			<td data-bind="text: name"></td>
 			<td>
 				<span data-bind="text: cut"></span>
+				<span data-bind="text: buy"></span>
+			</td>
+			<!-- <td><a href="#" data-bind="click: $root.removeSeat">Remove</a></td> -->
+		</tr> 
+	</tbody>
+</table>
+
+<select class="jsMaybeCardAction">
+    <option value="remove">Delete</option>
+    <option value="move">Move to Main Board</option>
+    <option value="buy">Mark as Not Owned</option>
+</select>   
+<button data-bind="click: editMaybeCards">Go!</button> 
+<table>
+	<tbody data-bind="foreach: maybeCards">
+		<tr>
+			<td><input type="checkbox" class="maybeCardCheckbox" data-bind="value: id"></td>
+			<td data-bind="text: name"></td>
+			<td>
 				<span data-bind="text: buy"></span>
 			</td>
 			<!-- <td><a href="#" data-bind="click: $root.removeSeat">Remove</a></td> -->

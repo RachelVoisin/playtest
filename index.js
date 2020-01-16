@@ -15,7 +15,8 @@ var bodyParser = require("body-parser"),
 var User = require("./models/user"),
     Deck = require("./models/deck");
 
-var deckRoutes = require("./routes/deck");
+var deckRoutes    = require("./routes/deck"),
+    deckApiRoutes = require("./routes/deckapi");
 
 const PORT = process.env.PORT || 3000
 
@@ -112,6 +113,7 @@ app.get("/logout", function (req, res) {
 });
 
 app.use(deckRoutes);
+app.use(deckApiRoutes);
 
 app.get('*', function (req, res) {
     res.redirect('/');

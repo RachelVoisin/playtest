@@ -1,23 +1,29 @@
 function Card(card) {
-    var self = this;
-    self.id = card.id;
+    var self    = this;
+    self.id     = card.id;
+    self.name   = card.name;
+    self.amount = ko.observable(card.number);
+    self.cut    = ko.observable(card.cut);
+    self.buy    = ko.observable(card.buy);
+}
+
+function MaybeCard(card) {
+    var self  = this;
+    self.id   = card.id;
     self.name = card.name;
-    self.amount = ko.observable(card.amount);
-    self.cut = ko.observable(card.cut);
-    self.buy = ko.observable(card.buy);
+    self.buy  = ko.observable(card.buy);
 }
 
 function DeckViewModel() {
     var self = this;
 
     const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const deckId = urlParams.get('deck');
+    const urlParams   = new URLSearchParams(queryString);
+    const deckId      = urlParams.get('deck');
     
-    self.name = ko.observable();
-    self.format = ko.observable();
+    self.name     = ko.observable();
+    self.format   = ko.observable();
     self.jsonData = ko.observable();
-    //self.cards = ko.observableArray([]);
 
     self.cards = ko.computed(function() {
         if(self.jsonData()) {
@@ -28,6 +34,18 @@ function DeckViewModel() {
             });
 
             return cards;
+        }
+    }, this);
+
+    self.maybeCards = ko.computed(function() {
+        if(self.jsonData()) {
+            var cards2 = [];
+
+            self.jsonData().maybeCards.forEach(function(card) {
+                cards2.push(new MaybeCard(card));
+            });
+
+            return cards2;
         }
     }, this);
 
@@ -71,8 +89,7 @@ function DeckViewModel() {
                         alert(result.message);
                     } else if (result.status == "success") {
                         $("#jsCardInput").val("");
-                        self.update();
-                        // can I avoid update? Can I use objSort directly in here?
+                        self.jsonData(result.updatedDeck); 
                     }
                 },
                 error: function (jXHR, textStatus, errorThrown){
@@ -86,8 +103,8 @@ function DeckViewModel() {
     };
 
     self.editDetails = function() {
-        var newDeckName = $(".jsDeckName").val();
-        var newDeckFormat = $(".jsFormat").val();
+        var newDeckName   = $(".jsDeckName").val(),
+            newDeckFormat = $(".jsFormat").val();
 
         if(!(newDeckName && newDeckName.length > 0)) {
             newDeckName = self.name();
@@ -116,10 +133,9 @@ function DeckViewModel() {
     }
 
     self.editCards = function() {
-        var action = $(".jsCardAction").val();
-
-        var checkboxes = $(".cardCheckbox");
-        var checkboxesChecked = [];
+        var action            = $(".jsCardAction").val(),
+            checkboxes        = $(".cardCheckbox"),
+            checkboxesChecked = [];
 
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
@@ -131,13 +147,12 @@ function DeckViewModel() {
             $.ajax({
                 type: "POST",
                 url: '/deckapi/editCards',
-                data: {id: deckId, action: action, cards: checkboxesChecked},
+                data: {id: deckId, action: action, cards: checkboxesChecked, board: "main"},
                 success: function(result) {
                     if (result.status == "error") {
                         alert(result.message);
                     } else if (result.status == "success") {
-                        self.update();
-                        // any way to avoid full reload?
+                        self.jsonData(result.updatedDeck);
                     }
                 },
                 error: function (jXHR, textStatus, errorThrown){
@@ -148,6 +163,102 @@ function DeckViewModel() {
                 dataType: "JSON"
             });
         }  
+    }
+
+    self.editMaybeCards = function() {
+        var action            = $(".jsMaybeCardAction").val(),
+            checkboxes        = $(".maybeCardCheckbox"),
+            checkboxesChecked = [];
+
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                checkboxesChecked.push(checkboxes[i].value);
+            }
+        }
+
+        if (checkboxesChecked.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: '/deckapi/editCards',
+                data: {id: deckId, action: action, cards: checkboxesChecked, board: "maybe"},
+                success: function(result) {
+                    if (result.status == "error") {
+                        alert(result.message);
+                    } else if (result.status == "success") {
+                        self.jsonData(result.updatedDeck);
+                    }
+                },
+                error: function (jXHR, textStatus, errorThrown){
+                    console.log(errorThrown);
+                    console.log(textStatus);
+                    console.log(jXHR);
+                },
+                dataType: "JSON"
+            });
+        } 
+    } 
+
+    self.increaseCard = function(card) {
+        $.ajax({
+            type: "POST",
+            url: '/deckapi/changeCardAmount',
+            data: {id: deckId, cardId: card.id, change: "increase"},
+            success: function(result) {
+                if (result.status == "error") {
+                    alert(result.message);
+                } else if (result.status == "success") {
+                    card.amount(card.amount() + 1);
+                }
+            },
+            error: function (jXHR, textStatus, errorThrown){
+                console.log(errorThrown);
+                console.log(textStatus);
+                console.log(jXHR);
+            },
+            dataType: "JSON"
+        });
+    }
+
+    self.decreaseCard = function(card) {
+        if (card.amount() == 1) {
+            $.ajax({
+                type: "POST",
+                url: '/deckapi/removeCard',
+                data: {id: deckId, cardId: card.id},
+                success: function(result) {
+                    if (result.status == "error") {
+                        alert(result.message);
+                    } else if (result.status == "success") {
+                        $("." + card.id).remove();
+                    }
+                },
+                error: function (jXHR, textStatus, errorThrown){
+                    console.log(errorThrown);
+                    console.log(textStatus);
+                    console.log(jXHR);
+                },
+                dataType: "JSON"
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: '/deckapi/changeCardAmount',
+                data: {id: deckId, cardId: card.id, change: "decrease"},
+                success: function(result) {
+                    if (result.status == "error") {
+                        alert(result.message);
+                    } else if (result.status == "success") {
+                        card.amount(card.amount() - 1);
+                    }
+                },
+                error: function (jXHR, textStatus, errorThrown){
+                    console.log(errorThrown);
+                    console.log(textStatus);
+                    console.log(jXHR);
+                },
+                dataType: "JSON"
+            });
+        }
     }
 
     self.cancelEditDetails = function() {
@@ -164,50 +275,10 @@ function DeckViewModel() {
 ko.applyBindings(new DeckViewModel());
 
 
-
-
-
-
-
-
-$( document ).ready(function() {
-    function addCard() {
-        var card = $(".jsAddCardText").val();
-        var action = $(".jsAddCardForm").prop('action');
-        if (card && card != "") {
-            $.ajax({
-                type: "POST",
-                url: action,
-                data: $(".jsAddCardForm").serialize(),
-                success: function(result){ 
-                    if (result.status == "error") {
-                        alert(result.message);
-                    } else if (result.status == "success") {
-                        if (result.duplicate == true) {
-                            console.log(".js" + result.card.id + "Number");
-                            $(".js" + result.card.id + "Number").val(result.card.number);
-                        } else if (result.duplicate == false) {
-                            newRow = document.createElement("TR");
-                            newRow.innerHTML = "<td>" + result.card.name + "</td>";
-                            $("#jsCardList").append(newRow);
-                        }
-                    }
-                },
-                error:function (jXHR, textStatus, errorThrown){
-                    console.log(errorThrown);
-                    console.log(textStatus);
-                    console.log(jXHR);
-                },
-                dataType: "JSON"
-            });
-        }
-    }
-
-    // $('form').on('submit', function(e) {
-    //     e.preventDefault();
-    // });
-    // $(".jsAddCardBtn").on("click", function(e) {
-    //     e.preventDefault();
-    //     addCard();
-    // });
-});
+// $('form').on('submit', function(e) {
+//     e.preventDefault();
+// });
+// $(".jsAddCardBtn").on("click", function(e) {
+//     e.preventDefault();
+//     addCard();
+// });
