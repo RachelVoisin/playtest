@@ -21,8 +21,16 @@ function DeckViewModel() {
     const urlParams   = new URLSearchParams(queryString);
     const deckId      = urlParams.get('deck');
     
-    self.name     = ko.observable();
-    self.format   = ko.observable();
+    self.name   = ko.observable();
+    self.format = ko.observable();
+    self.color  = ko.observable();
+    self.image  = ko.observable();
+
+    self.tempName   = ko.observable();
+    self.tempFormat = ko.observable();
+    self.tempColor  = ko.observable();
+    self.tempImage  = ko.observable();
+
     self.jsonData = ko.observable();
 
     self.cards = ko.computed(function() {
@@ -104,22 +112,30 @@ function DeckViewModel() {
 
     self.editDetails = function() {
         var newDeckName   = $(".jsDeckName").val(),
-            newDeckFormat = $(".jsFormat").val();
+            newDeckFormat = $(".jsFormat").val(),
+            newDeckColor  = $(".jsColor").val(),
+            newDeckImage  = $(".jsImage").val();
 
         if(!(newDeckName && newDeckName.length > 0)) {
             newDeckName = self.name();
         }
 
+        if(!(newDeckImage && newDeckImage.length > 0)) {
+            newDeckImage = self.image();
+        }
+
         $.ajax({
             type: "POST",
             url: '/deckapi/editDetails',
-            data: {id: deckId, name: newDeckName, format: newDeckFormat},
+            data: {id: deckId, name: newDeckName, format: newDeckFormat, color: newDeckColor},
             success: function(result) {
                 if (result.status == "error") {
                     alert(result.message);
                 } else if (result.status == "success") {
                     self.name(newDeckName);
                     self.format(newDeckFormat);
+                    self.color(newDeckColor);
+                    self.image(newDeckImage);
                     // hide 
                 }
             },
@@ -261,15 +277,65 @@ function DeckViewModel() {
         }
     }
 
+    self.changeCut = function(card) {
+        $.ajax({
+            type: "POST",
+            url: '/deckapi/changeStatus',
+            data: {id: deckId, cardId: card.id, change: "cut"},
+            success: function(result) {
+                if (result.status == "error") {
+                    alert(result.message);
+                } else if (result.status == "success") {
+                    card.cut(!card.cut());
+                }
+            },
+            error: function (jXHR, textStatus, errorThrown){
+                console.log(errorThrown);
+                console.log(textStatus);
+                console.log(jXHR);
+            },
+            dataType: "JSON"
+        });
+    }
+
+    self.changeBuy = function(card) {
+        $.ajax({
+            type: "POST",
+            url: '/deckapi/changeStatus',
+            data: {id: deckId, cardId: card.id, change: "buy"},
+            success: function(result) {
+                if (result.status == "error") {
+                    alert(result.message);
+                } else if (result.status == "success") {
+                    card.buy(!card.buy());
+                }
+            },
+            error: function (jXHR, textStatus, errorThrown){
+                console.log(errorThrown);
+                console.log(textStatus);
+                console.log(jXHR);
+            },
+            dataType: "JSON"
+        });
+    }
+
     self.cancelEditDetails = function() {
         // should probably just put this inline
     }
 
     $.ajaxSetup({async:false});
     self.update();
+    $.ajaxSetup({async:true});
+
     self.name(self.jsonData().name);
     self.format(self.jsonData().format);
-    $.ajaxSetup({async:true});
+    self.color(self.jsonData().color);
+    self.image(self.jsonData().image);
+
+    self.tempName(self.jsonData().name);
+    self.tempFormat(self.jsonData().format);
+    self.tempColor(self.jsonData().color); 
+    self.tempImage(self.jsonData().image);   
 }
 
 ko.applyBindings(new DeckViewModel());

@@ -3,17 +3,19 @@
 <div class="deckDetails">
     <p data-bind="text: name"></p>
     <p data-bind="text: format"></p>
-    <!-- <div style="width:15px;height:15px;background-color:deck.color>;"></div> -->
+    <div data-bind="style: { background: color}">Color</div>
+    <img data-bind="attr: {src: image}">
 </div>
 
 <div class="deckDetailsEdit">
-    <p>Deck Name: <input class="jsDeckName" data-bind="attr: {placeholder: name}" /></p>
-    <p>Format: <select class="jsFormat">
-        <option data-bind="value: format, text: format"></option>
-        <option data-bind="hidden: format() == 'EDH/Commander'" value="EDH/Commander">EDH/Commander</option>
-        <option data-bind="hidden: format() == 'Standard'" value="Standard">Standard</option>
-        <option data-bind="hidden: format() == 'Modern'" value="Modern">Modern</option>
+    <p>Deck Name: <input class="jsDeckName" data-bind="value: tempName" /></p>
+    <p>Format: <select class="jsFormat" data-bind="value: tempFormat">
+        <option value="EDH/Commander">EDH/Commander</option>
+        <option value="Standard">Standard</option>
+        <option value="Modern">Modern</option>
     </select></p>
+    <p>Color: <input type="color" class="jsColor" data-bind="value: tempColor"></p>
+    <p>Deck Image Url: <input class="jsImage" data-bind="value: tempImage" /></p>
 
     <button data-bind="click: editDetails">Save</button>
     <button data-bind="click: cancelEditDetails">Cancel</button>
@@ -42,10 +44,9 @@
             </td>
 			<td data-bind="text: name"></td>
 			<td>
-				<span data-bind="text: cut"></span>
-				<span data-bind="text: buy"></span>
+				<button data-bind="click: $root.changeCut, text: cut"></button>
+				<button data-bind="click: $root.changeBuy, text: buy"></button>
 			</td>
-			<!-- <td><a href="#" data-bind="click: $root.removeSeat">Remove</a></td> -->
 		</tr> 
 	</tbody>
 </table>
@@ -62,10 +63,8 @@
 			<td><input type="checkbox" class="maybeCardCheckbox" data-bind="value: id"></td>
 			<td data-bind="text: name"></td>
 			<td>
-				<span data-bind="text: buy"></span>
+				<button data-bind="click: $root.changeBuy, text: buy"></button>
 			</td>
-			<!-- <td><a href="#" data-bind="click: $root.removeSeat">Remove</a></td> -->
-		</tr> 
 	</tbody>
 </table>
 

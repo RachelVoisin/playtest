@@ -114,6 +114,8 @@ router.post("/deckapi/editDetails", function(req, res) {
 		} else {
             foundDeck.name = req.body.name;
             foundDeck.format = req.body.format;
+            foundDeck.color = req.body.color;
+            foundDeck.image = req.body.image;
             foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
             foundDeck.save();
             res.send({
@@ -253,6 +255,43 @@ router.post("/deckapi/removeCard", function(req, res) {
                     });  
                 }
             });          
+        }
+    });
+});
+
+router.post("/deckapi/changeStatus", function(req, res) {
+    Deck.findById(req.body.id)
+	.exec(function(err, foundDeck){
+        if(err){
+            console.log(err);
+            res.send({
+                status: "error",
+                message: "Could not find deck" 
+            });	
+		} else {
+            foundDeck.deckCards.forEach(function (card) {
+                if(card.id == req.body.cardId) {
+                    if (req.body.change == "cut") {
+                        card.cut = !card.cut;
+                    } else if (req.body.change == "buy") {
+                        card.buy = !card.buy;
+                    }
+                }
+            });
+            
+            foundDeck.maybeCards.forEach(function (card) {
+                if(card.id == req.body.cardId) {
+                    if (req.body.change == "buy") {
+                        card.buy = !card.buy;
+                    }  
+                }
+            });
+
+            foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
+            foundDeck.save();
+            res.send({
+                status: "success"
+            });
         }
     });
 });
