@@ -21,6 +21,8 @@
     <button data-bind="click: cancelEditDetails">Cancel</button>
 </div>
 
+<a href="<%= baseUrl %>/deck/massadd/<%= deckId %>">Mass Add</a>
+
 <form class="autocomplete jsAddCardForm" autocomplete="OFF">
     <input id="jsCardInput" type="text" name="name" placeholder="Card Name" data-bind="event: { keyup: enteredName }">
     <button data-bind="click: addCard">Add Card</button>
