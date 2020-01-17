@@ -61,9 +61,10 @@
 <button data-bind="click: editMaybeCards">Go!</button> 
 <table>
 	<tbody data-bind="foreach: maybeCards">
-		<tr>
+		<tr data-bind="class: id">
 			<td><input type="checkbox" class="maybeCardCheckbox" data-bind="value: id"></td>
-			<td data-bind="text: name"></td>
+            <td data-bind="text: name"></td>
+            <td><button data-bind="click: $root.removeCard">-</button></td>
 			<td>
 				<button data-bind="click: $root.changeBuy, text: buy"></button>
 			</td>

@@ -212,7 +212,28 @@ function DeckViewModel() {
                 dataType: "JSON"
             });
         } 
-    } 
+    }
+    
+    self.removeCard = function(card) {
+        $.ajax({
+            type: "POST",
+            url: '/deckapi/removeCard',
+            data: {id: deckId, cardId: card.id},
+            success: function(result) {
+                if (result.status == "error") {
+                    alert(result.message);
+                } else if (result.status == "success") {
+                    $("." + card.id).remove();
+                }
+            },
+            error: function (jXHR, textStatus, errorThrown){
+                console.log(errorThrown);
+                console.log(textStatus);
+                console.log(jXHR);
+            },
+            dataType: "JSON"
+        });
+    }
 
     self.increaseCard = function(card) {
         $.ajax({

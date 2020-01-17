@@ -246,15 +246,19 @@ router.post("/deckapi/removeCard", function(req, res) {
 		} else {
             foundDeck.deckCards.forEach(function (card, index) {
                 if(card.id == req.body.cardId) {
-                    foundDeck.deckCards.splice(index, 1);
-
-                    foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
-                    foundDeck.save();
-                    res.send({
-                        status: "success"
-                    });  
+                    foundDeck.deckCards.splice(index, 1); 
                 }
-            });          
+            });
+            foundDeck.maybeCards.forEach(function (card, index) {
+                if(card.id == req.body.cardId) {
+                    foundDeck.maybeCards.splice(index, 1);   
+                }
+            }); 
+            foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
+            foundDeck.save();
+            res.send({
+                status: "success"
+            });            
         }
     });
 });
