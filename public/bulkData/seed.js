@@ -22,7 +22,7 @@ Card.remove({}, function(err){
         cardsJSON.forEach(function(card){
             var name     = card.name || null,
                 image    = "",
-                typeLine = card.typeLine || null,
+                typeLine = card.type_line || null,
                 manaCost = card.mana_cost || null,
                 cmc      = card.cmc || 0, 
                 oracleid = card.oracle_id;

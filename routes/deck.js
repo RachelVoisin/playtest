@@ -49,16 +49,18 @@ router.post("/deck/new", middleware.isLoggedIn, function(req, res){
 // View Deck Page
 router.get("/deck/view/:id", function(req, res){
 	Deck.findById(req.params.id)
+	.populate('deckCards.id')
+	.populate('maybeCards.id')
 	.exec(function(err, foundDeck){
 		if(err){
 			console.log(err);
 			req.flash("error", "Could not find deck");
 			res.redirect("/");
 		} else {
-			var sortedDeck       = foundDeck.deckCards.objSort("name");
-			var sortedMaybeBoard = foundDeck.maybeCards.objSort("name");
+			var sortedCards = middleware.sortCardList(req, foundDeck);
+			foundDeck.maybeCards.objSort("name");
 
-			res.render("deck/view", {deck: foundDeck, deckCards: sortedDeck, maybeCards: sortedMaybeBoard});				
+			res.render("deck/view", {deck: foundDeck, sortedCards: sortedCards});				
 		}
 	});
 });

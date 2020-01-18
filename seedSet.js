@@ -22,6 +22,8 @@ request.onreadystatechange = function () {
                     // update image
                 } else {
                     // add new card
+
+                    // type_line not typeline
                 }
             });
 

@@ -35,30 +35,33 @@ middlewareObj.sortCardList = function(req, deck) {
     deck.deckCards.objSort("name");
 
     var sort = req.query.sort || "type";
-    var overlap = req.query.overlap ? true : false;
+    var overlap = req.query.overlap ? false : true;
 
-    var deckCards = [];
+    var sortedCards = [];
 
     if (sort == "type") {
-        var sorter = ["Creature", "Enchantment", "Artifact", "Instant", "Land", "Planeswalker", "Sorcery"];
+        var sorter    = ["Creature", "Enchantment", "Artifact", "Instant", "Land", "Planeswalker", "Sorcery"],
+            usedCards = [];
         sorter.forEach(function(type) {
             var section = {
                 subtitle: type,
                 cards: []
             };
-            deck.deckCards.forEach(function(card, index) {
-                // populate cards?
-                if (card.types.includes(type)) {
-                    section.cards.push(card);
-    
-                    if(overlap == false) {
-                        deck.cards.splice(index, 1);
+            deck.deckCards.forEach(function(card) {
+                if (card.id.types.includes(type)) {
+                    if (overlap == false) {
+                        if (!usedCards.includes(card.id.oracleid)) {
+                            usedCards.push(card.id.oracleid);
+                            section.cards.push(card);
+                        }
+                    } else {
+                        section.cards.push(card);
                     }
                 }
             });
     
             if (section.cards.length > 0) {
-                deckCards.push(section);
+                sortedCards.push(section);
             }
         });
     } else if (sort == "cmc") {
@@ -88,7 +91,7 @@ middlewareObj.sortCardList = function(req, deck) {
         });
 
     } else if (sort == "color") {
-        // gotta change card model
+        // gotta change card model to be full name to print out full name
         var sorter = ["W", "U", "B", "R", "G", "C"];
         sorter.forEach(function(type) {
             var section = {
@@ -113,7 +116,7 @@ middlewareObj.sortCardList = function(req, deck) {
         });
     }
     
-    return deckCards;
+    return sortedCards;
 }
 
 module.exports = middlewareObj;

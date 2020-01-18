@@ -6,7 +6,16 @@
 <div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
 
 <div>
-    <% deck.deckCards.forEach(function(card){ %>
+    <% sortedCards.forEach(function(section){ %>
+        <h3><%= section.subtitle %></h3>
+        <% section.cards.forEach(function(card){ %>
+            <p><%= card.name %></p>
+        <% }); %>
+    <% }); %>
+</div>
+<br />
+<div>
+    <% deck.maybeCards.forEach(function(card){ %>
         <p><%= card.name %></p>
     <% }); %>
 </div>
