@@ -5,6 +5,17 @@
 <p><%= deck.dateUpdated %></p>
 <div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
 
+<form>
+    <select>
+        <option value="type">type</option>
+        <option value="cmc">cmc</option>
+        <option value="color">color</option>
+    </select>
+
+    <label>Overlap Categories: </label>
+    <input type="checkbox"> 
+</form>
+
 <div>
     <% sortedCards.forEach(function(section){ %>
         <h3><%= section.subtitle %></h3>

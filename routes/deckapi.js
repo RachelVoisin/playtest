@@ -12,6 +12,8 @@ var User = require("../models/user"),
 
 router.get("/deckapi/getDeck", function(req, res) {
     Deck.findById(req.query.id)
+    .populate('deckCards.id')
+	.populate('maybeCards.id')
 	.exec(function(err, foundDeck){
 		if(err){
 			console.log(err);
@@ -20,11 +22,12 @@ router.get("/deckapi/getDeck", function(req, res) {
                 message: "Could not find deck" 
             });	
 		} else if(foundDeck){
-			foundDeck.deckCards.objSort("name");
+            var sortedCards = middleware.sortCardList(req, foundDeck);
             foundDeck.maybeCards.objSort("name");
             res.send({
                 status: "success",
-                data: foundDeck 
+                deckData: foundDeck,
+                cardData: sortedCards
             });			
 		} else {
             res.send({
@@ -39,6 +42,8 @@ router.get("/deckapi/getDeck", function(req, res) {
 // Cannot check deck ownership because no req.params.id
 router.post("/deckapi/addCard", function(req, res) {
     Deck.findById(req.body.id)
+    .populate('deckCards.id')
+	.populate('maybeCards.id')
 	.exec(function(err, foundDeck){
 		if(err){
             console.log(err);
@@ -62,19 +67,14 @@ router.post("/deckapi/addCard", function(req, res) {
 				} else {
                     var duplicate = false;
                     foundDeck.deckCards.forEach(function(card) {
+                        // would be better to check oracle id
                         if (card.name == foundCard.name) {
                             card.number += 1;
                             duplicate = true;
                         }
                     });
 
-                    if (duplicate) {
-                        foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
-                        foundDeck.save();
-                        res.send({
-                            status: "success"
-                        });
-                    } else {
+                    if (!duplicate) {
                         var newCard = {
                             cut: false,
                             buy: false,
@@ -84,16 +84,17 @@ router.post("/deckapi/addCard", function(req, res) {
                         }
     
                         foundDeck.deckCards.push(newCard);
-                        foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
-                        foundDeck.save();
+                    } 
+                        
+                    foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
+                    foundDeck.save();
 
-                        foundDeck.deckCards.objSort("name");
-                        foundDeck.maybeCards.objSort("name");
-                        res.send({
-                            status: "success",
-                            updatedDeck: foundDeck
-                        });
-                    }
+                    var sortedCards = middleware.sortCardList(req, foundDeck);
+                    
+                    res.send({
+                        status: "success",
+                        cardData: sortedCards
+                    });	
 				}
 			});					
 		}
@@ -129,6 +130,8 @@ router.post("/deckapi/editDetails", function(req, res) {
 // Cannot check deck ownership because no req.params.id
 router.post("/deckapi/editCards", function(req, res) {
     Deck.findById(req.body.id)
+    .populate('deckCards.id')
+	.populate('maybeCards.id')
 	.exec(function(err, foundDeck){
         if(err){
             console.log(err);
@@ -143,7 +146,7 @@ router.post("/deckapi/editCards", function(req, res) {
             var indexesToBeRemoved = [];
 
             foundDeck[board].forEach(function (card, index) {
-                if (req.body.cards.includes(card.id.toString())) {
+                if (req.body.cards.includes(card.id._id.toString())) {
                     switch(req.body.action) {
                         case "remove":
                             indexesToBeRemoved.push(index);
@@ -195,12 +198,13 @@ router.post("/deckapi/editCards", function(req, res) {
             foundDeck.dateUpdated = dateFormat(Date.now(), "mmmm dS, yyyy");
             foundDeck.save();
 
-            foundDeck.deckCards.objSort("name");
+            var sortedCards = middleware.sortCardList(req, foundDeck);
             foundDeck.maybeCards.objSort("name");
             res.send({
                 status: "success",
-                updatedDeck: foundDeck
-            });
+                deckData: foundDeck,
+                cardData: sortedCards
+            });	
         }
     });   
 });

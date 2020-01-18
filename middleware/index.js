@@ -35,12 +35,12 @@ middlewareObj.sortCardList = function(req, deck) {
     deck.deckCards.objSort("name");
 
     var sort = req.query.sort || "type";
-    var overlap = req.query.overlap ? false : true;
+    var overlap = req.query.overlap || true;
 
     var sortedCards = [];
 
     if (sort == "type") {
-        var sorter    = ["Creature", "Enchantment", "Artifact", "Instant", "Land", "Planeswalker", "Sorcery"],
+        var sorter    = ["Creature", "Enchantment", "Artifact", "Instant", "Sorcery", "Planeswalker", "Land"],
             usedCards = [];
         sorter.forEach(function(type) {
             var section = {
@@ -49,7 +49,7 @@ middlewareObj.sortCardList = function(req, deck) {
             };
             deck.deckCards.forEach(function(card) {
                 if (card.id.types.includes(type)) {
-                    if (overlap == false) {
+                    if (overlap == "false") {
                         if (!usedCards.includes(card.id.oracleid)) {
                             usedCards.push(card.id.oracleid);
                             section.cards.push(card);
@@ -68,50 +68,50 @@ middlewareObj.sortCardList = function(req, deck) {
         var sorter = [];
 
         deck.deckCards.forEach(function(card) {
-            // populate cards?
-            if (!sorter.includes(card.cmc)) {
-                sorter.push(card.cmc);
+            if (!sorter.includes(card.id.cmc)) {
+                sorter.push(card.id.cmc);
             }
         });
 
-        sorter.forEach(function(type) {
+        sorter.sort(function(a,b){ return a - b; });
+
+        sorter.forEach(function(sort) {
             var section = {
-                subtitle: type,
+                subtitle: sort,
                 cards: []
             };
             
             deck.deckCards.forEach(function(card) {
-                // populate cards?
-                if (card.cmc == type) {
+                if (card.id.cmc == sort) {
                     section.cards.push(card);
                 }
             });
 
-            deckCards.push(section);
+            sortedCards.push(section);
         });
 
     } else if (sort == "color") {
         // gotta change card model to be full name to print out full name
         var sorter = ["W", "U", "B", "R", "G", "C"];
-        sorter.forEach(function(type) {
+        sorter.forEach(function(sort) {
             var section = {
-                subtitle: type,
+                subtitle: sort,
                 cards: []
             };
             
             deck.deckCards.forEach(function(card) {
-                // populate cards?
-                if (card.manaSymbols[type] > 0) {
+                if (card.id.manaSymbols[sort] > 0) {
                     section.cards.push(card);
                 }
 
-                if (type == "C" && card.manaSymbols.Total == 0) {
+                if (sort == "C" && (card.id.manaSymbols.Total == 0 | card.id.manaSymbols.Total == null)) {
+                    // this catches lands into colorless, for now
                     section.cards.push(card);
                 }
             });
 
             if (section.cards.length > 0) {
-                deckCards.push(section);
+                sortedCards.push(section);
             }
         });
     }

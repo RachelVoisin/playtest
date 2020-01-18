@@ -1,6 +1,6 @@
 function Card(card) {
     var self    = this;
-    self.id     = card.id;
+    self.id     = card.id._id;
     self.name   = card.name;
     self.amount = ko.observable(card.number);
     self.cut    = ko.observable(card.cut);
@@ -9,7 +9,7 @@ function Card(card) {
 
 function MaybeCard(card) {
     var self  = this;
-    self.id   = card.id;
+    self.id   = card.id._id;
     self.name = card.name;
     self.buy  = ko.observable(card.buy);
 }
@@ -20,7 +20,10 @@ function DeckViewModel() {
     const queryString = window.location.search;
     const urlParams   = new URLSearchParams(queryString);
     const deckId      = urlParams.get('deck');
-    
+
+    self.sortType          = ko.observable("type");
+    self.overlapCategories = ko.observable(true);
+
     self.name   = ko.observable();
     self.format = ko.observable();
     self.color  = ko.observable();
@@ -32,13 +35,22 @@ function DeckViewModel() {
     self.tempImage  = ko.observable();
 
     self.jsonData = ko.observable();
+    self.cardJsonData = ko.observable();
 
-    self.cards = ko.computed(function() {
-        if(self.jsonData()) {
+    self.sortedCards = ko.computed(function() {
+        if(self.cardJsonData()) {
             var cards = [];
 
-            self.jsonData().deckCards.forEach(function(card) {
-                cards.push(new Card(card));
+            self.cardJsonData().forEach(function(section) {
+                var tempSection = {
+                    subtitle: section.subtitle,
+                    cards: []
+                }
+                section.cards.forEach(function(card) {
+                    tempSection.cards.push(new Card(card));
+                });
+
+                cards.push(tempSection);
             });
 
             return cards;
@@ -57,22 +69,30 @@ function DeckViewModel() {
         }
     }, this);
 
-    self.enteredName = function() {
-        var e = window.event;
+    self.enteredName = function(obj, e) {
         if (e.keyCode == 13){
             self.addCard();
         }
     }
 
+    self.sortChanged = function(obj, e) {
+        self.sortType($('.jsSort').val());
+        if (e.originalEvent) {
+            self.update();
+        } 
+        return true;
+    }
+
     self.update = function() {
         $.ajax({
             type: "GET",
-            url: '/deckapi/getDeck?id=' + deckId,
+            url: '/deckapi/getDeck?id=' + deckId + "&sort=" + self.sortType() + "&overlap=" + self.overlapCategories(),
             success: function(result) {
                 if (result.status == "error") {
                     alert(result.message);
                 } else if (result.status == "success") {
-                    self.jsonData(result.data);
+                    self.jsonData(result.deckData);
+                    self.cardJsonData(result.cardData);
                 }
             },
             error: function (jXHR, textStatus, errorThrown){
@@ -90,14 +110,14 @@ function DeckViewModel() {
         if(newCardName && newCardName.length > 0) {
             $.ajax({
                 type: "POST",
-                url: '/deckapi/addCard',
+                url: '/deckapi/addCard?sort=' + self.sortType() + "&overlap=" + self.overlapCategories(),
                 data: {id: deckId, name: newCardName},
                 success: function(result) {
                     if (result.status == "error") {
                         alert(result.message);
                     } else if (result.status == "success") {
                         $("#jsCardInput").val("");
-                        self.jsonData(result.updatedDeck); 
+                        self.cardJsonData(result.cardData); 
                     }
                 },
                 error: function (jXHR, textStatus, errorThrown){
@@ -111,31 +131,28 @@ function DeckViewModel() {
     };
 
     self.editDetails = function() {
-        var newDeckName   = $(".jsDeckName").val(),
-            newDeckFormat = $(".jsFormat").val(),
-            newDeckColor  = $(".jsColor").val(),
-            newDeckImage  = $(".jsImage").val();
+        var newDeckFormat = $(".jsFormat").val();
 
-        if(!(newDeckName && newDeckName.length > 0)) {
-            newDeckName = self.name();
+        if(!(self.tempName() && self.tempName().length > 0)) {
+            self.tempName(self.name());
         }
 
-        if(!(newDeckImage && newDeckImage.length > 0)) {
-            newDeckImage = self.image();
+        if(!(self.tempImage() && self.tempImage().length > 0)) {
+            self.tempImage(self.image());
         }
 
         $.ajax({
             type: "POST",
             url: '/deckapi/editDetails',
-            data: {id: deckId, name: newDeckName, format: newDeckFormat, color: newDeckColor},
+            data: {id: deckId, name: self.tempName(), format: newDeckFormat, color: self.tempColor(), image: self.tempImage()},
             success: function(result) {
                 if (result.status == "error") {
                     alert(result.message);
                 } else if (result.status == "success") {
-                    self.name(newDeckName);
+                    self.name(self.tempName());
                     self.format(newDeckFormat);
-                    self.color(newDeckColor);
-                    self.image(newDeckImage);
+                    self.color(self.tempColor());
+                    self.image(self.tempImage());
                     // hide 
                 }
             },
@@ -162,13 +179,14 @@ function DeckViewModel() {
         if (checkboxesChecked.length > 0) {
             $.ajax({
                 type: "POST",
-                url: '/deckapi/editCards',
+                url: '/deckapi/editCards?sort=' + self.sortType() + "&overlap=" + self.overlapCategories(),
                 data: {id: deckId, action: action, cards: checkboxesChecked, board: "main"},
                 success: function(result) {
                     if (result.status == "error") {
                         alert(result.message);
                     } else if (result.status == "success") {
-                        self.jsonData(result.updatedDeck);
+                        self.jsonData(result.deckData);
+                        self.cardJsonData(result.cardData); 
                     }
                 },
                 error: function (jXHR, textStatus, errorThrown){
@@ -195,13 +213,14 @@ function DeckViewModel() {
         if (checkboxesChecked.length > 0) {
             $.ajax({
                 type: "POST",
-                url: '/deckapi/editCards',
+                url: '/deckapi/editCards?sort=' + self.sortType() + "&overlap=" + self.overlapCategories(),
                 data: {id: deckId, action: action, cards: checkboxesChecked, board: "maybe"},
                 success: function(result) {
                     if (result.status == "error") {
                         alert(result.message);
                     } else if (result.status == "success") {
-                        self.jsonData(result.updatedDeck);
+                        self.jsonData(result.deckData);
+                        self.cardJsonData(result.cardData); 
                     }
                 },
                 error: function (jXHR, textStatus, errorThrown){

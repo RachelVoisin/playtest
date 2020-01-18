@@ -23,6 +23,17 @@
 
 <a href="<%= baseUrl %>/deck/massadd/<%= deckId %>">Mass Add</a>
 
+<select class="jsSort" data-bind="value: sortType, event:{change: sortChanged }">
+    <option value="type">type</option>
+    <option value="cmc">cmc</option>
+    <option value="color">color</option>
+</select>
+
+<span data-bind="visible: sortType() == 'type'">
+    <label>Overlap Categories: </label>
+    <input type="checkbox" data-bind="checked: overlapCategories, click: sortChanged"> 
+</span>
+
 <form class="autocomplete jsAddCardForm" autocomplete="OFF">
     <input id="jsCardInput" type="text" name="name" placeholder="Card Name" data-bind="event: { keyup: enteredName }">
     <button data-bind="click: addCard">Add Card</button>
@@ -35,22 +46,29 @@
     <option value="buy">Mark as Not Owned</option>
 </select>   
 <button data-bind="click: editCards">Go!</button> 
-<table>
-	<tbody data-bind="foreach: cards">
-		<tr data-bind="class: id">
-			<td><input type="checkbox" class="cardCheckbox" data-bind="value: id"></td>
-			<td>
+
+<table data-bind="foreach: sortedCards">
+    <thead>
+        <tr>
+            <th data-bind="text: subtitle"></th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: cards">
+        <tr data-bind="class: id">
+            <!-- should find a way to save checked state -->
+            <td><input type="checkbox" class="cardCheckbox" data-bind="value: id"></td>
+            <td>
                 <button data-bind="click: $root.increaseCard">+</button>
                 <span data-bind="text: amount"></span>
                 <button data-bind="click: $root.decreaseCard">-</button>
             </td>
-			<td data-bind="text: name"></td>
-			<td>
-				<button data-bind="click: $root.changeCut, text: cut"></button>
-				<button data-bind="click: $root.changeBuy, text: buy"></button>
-			</td>
-		</tr> 
-	</tbody>
+            <td data-bind="text: name"></td>
+            <td>
+                <button data-bind="click: $root.changeCut, text: cut"></button>
+                <button data-bind="click: $root.changeBuy, text: buy"></button>
+            </td>
+        </tr> 
+    </tbody>
 </table>
 
 <select class="jsMaybeCardAction">
