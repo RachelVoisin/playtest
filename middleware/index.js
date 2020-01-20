@@ -91,7 +91,6 @@ middlewareObj.sortCardList = function(req, deck) {
         });
 
     } else if (sort == "color") {
-        // gotta change card model to be full name to print out full name
         var sorter = ["W", "U", "B", "R", "G", "C"];
         sorter.forEach(function(sort) {
             var section = {
@@ -100,12 +99,7 @@ middlewareObj.sortCardList = function(req, deck) {
             };
             
             deck.deckCards.forEach(function(card) {
-                if (card.id.manaSymbols[sort] > 0) {
-                    section.cards.push(card);
-                }
-
-                if (sort == "C" && (card.id.manaSymbols.Total == 0 | card.id.manaSymbols.Total == null)) {
-                    // this catches lands into colorless, for now
+                if (card.id.colorIdentity.includes(sort)) {
                     section.cards.push(card);
                 }
             });
