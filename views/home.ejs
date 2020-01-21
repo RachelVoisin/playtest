@@ -1,14 +1,8 @@
 <%- include('./partials/header'); %>
 
-<form action="/login" method="POST">
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="password">
-    <input type="submit" value="Login">
-</form>
-
-<a href="<%= baseUrl %>/register">Register</a>
-
-<a href="<%= baseUrl %>/deck/new">+ New Deck</a>
+<% if(currentUser){ %>
+    <a href="<%= baseUrl %>/deck/new">+ New Deck</a>
+<% } %>
 
 <% if (currentUser && (!decks || decks.length == 0)) { %>
     <p>You have not created any decks!</p>

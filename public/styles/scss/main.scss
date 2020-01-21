@@ -1,5 +1,148 @@
+@import '_icons.scss';
+
 $base-font-size: 16px;
+$small-font-size: 14px;
+
+$dark: #2C2B30;
+$medium: #4F4F51;
+$light: #D6D6D6;
+$light-accent: #F2C4CE;
+$accent: #F58F7C;
+
+$break-tablet: 800px;
+$break-small: 550px;
+
+$base-font: 'Roboto', sans-serif;
+$header-font: 'Roboto Condensed', sans-serif;
+
+@font-face {
+    font-family: "icon-font";
+    src: url('../../fonts/icomoon.eot'),
+         url('../../fonts/icomoon.woff'),
+         url('../../fonts/icomoon.ttf'),
+         url('../../fonts/icomoon.svg'); 
+}
+$icon-font: 'icon-font';
+
+@mixin base-text {
+    font-size: $base-font-size;
+    font-family: $base-font;
+    color: $dark;
+}
+
+@mixin grid($column-gap: 0px, $row-gap: 0px) {
+    display: flex;
+    margin-right: -#{$column-gap};
+    margin-bottom: -#{$row-gap};
+
+    > * {
+        margin-right: $column-gap;
+        margin-bottom: $row-gap;
+    }
+}
+
+@mixin icon($icon: "", $use-before: false) {
+    @if $use-before {
+        &::before {
+            font-family: $icon-font;
+            font-size: 0.9em;
+            padding-right: 2px;
+            content: $icon;
+        }
+    } @else {
+        &::after {
+            font-family: $icon-font;
+            font-size: 0.9em;
+            padding-left: 2px;
+            content: $icon;
+        }
+    }
+}
 
 body {
-    font-size: $base-font-size;
+    @include base-text;
+    margin: 0;
+}
+
+h1, h2, h3, h4 {
+    font-family: $header-font;
+}
+
+a {
+    color: $medium;
+    font-family: $header-font;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+input, button {
+    @include base-text;
+}
+
+input[type=submit], button {
+    background: $medium;
+    color: white;
+    border: none;
+    font-size: $small-font-size;
+}
+
+input[type=text], input[type=password], textarea {
+    padding: 4px 8px;
+    border: 2px solid $light;
+}
+
+header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    padding: 5px;
+    border-bottom: 1px solid $light;
+}
+
+.login-form {
+    @include grid($column-gap: 4px);
+
+    @media screen and (max-width: $break-tablet) {
+        width: 50%;
+        flex-wrap: wrap;
+
+        > * {
+            flex-grow: 1;
+            width: 30%;
+        }
+    }
+
+    .login-btn {
+        margin-top: 1px;
+        margin-bottom: 1px;
+
+        @media screen and (max-width: $break-tablet) {
+            padding: 4px;
+            margin-top: 2px;
+        }
+    }
+}
+
+.register-container {
+    position: relative;
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid $dark;
+    min-width: 10%;
+
+    @media screen and (max-width: $break-tablet) {
+        width: 50%
+    }
+
+    .register-btn {
+        @include icon($icon: $icon-arrow2);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+
+        @media screen and (max-width: $break-tablet) {
+            left: 50%;
+            transform: translateY(-50%) translateX(-50%);
+        }
+    }
 }

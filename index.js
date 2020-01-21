@@ -109,7 +109,7 @@ app.post("/login", passport.authenticate("local",
 app.get("/logout", function (req, res) {
     req.logout();
     req.flash("success", "You have been successfully signed out.");
-    res.redirect("/");
+    res.redirect("back");
 });
 
 app.use(deckRoutes);

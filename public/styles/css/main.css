@@ -1,2 +1,86 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "icon-font";
+  src: url("../../fonts/icomoon.eot"), url("../../fonts/icomoon.woff"), url("../../fonts/icomoon.ttf"), url("../../fonts/icomoon.svg"); }
+
 body {
-  font-size: 16px; }
+  font-size: 16px;
+  font-family: "Roboto", sans-serif;
+  color: #2C2B30;
+  margin: 0; }
+
+h1, h2, h3, h4 {
+  font-family: "Roboto Condensed", sans-serif; }
+
+a {
+  color: #4F4F51;
+  font-family: "Roboto Condensed", sans-serif;
+  text-decoration: none;
+  text-transform: uppercase; }
+
+input, button {
+  font-size: 16px;
+  font-family: "Roboto", sans-serif;
+  color: #2C2B30; }
+
+input[type=submit], button {
+  background: #4F4F51;
+  color: white;
+  border: none;
+  font-size: 14px; }
+
+input[type=text], input[type=password], textarea {
+  padding: 4px 8px;
+  border: 2px solid #D6D6D6; }
+
+header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  padding: 5px;
+  border-bottom: 1px solid #D6D6D6; }
+
+.login-form {
+  display: flex;
+  margin-right: -4px;
+  margin-bottom: -0px; }
+  .login-form > * {
+    margin-right: 4px;
+    margin-bottom: 0px; }
+  @media screen and (max-width: 800px) {
+    .login-form {
+      width: 50%;
+      flex-wrap: wrap; }
+      .login-form > * {
+        flex-grow: 1;
+        width: 30%; } }
+  .login-form .login-btn {
+    margin-top: 1px;
+    margin-bottom: 1px; }
+    @media screen and (max-width: 800px) {
+      .login-form .login-btn {
+        padding: 4px;
+        margin-top: 2px; } }
+
+.register-container {
+  position: relative;
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid #2C2B30;
+  min-width: 10%; }
+  @media screen and (max-width: 800px) {
+    .register-container {
+      width: 50%; } }
+  .register-container .register-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); }
+    .register-container .register-btn::after {
+      font-family: "icon-font";
+      font-size: 0.9em;
+      padding-left: 2px;
+      content: ""; }
+    @media screen and (max-width: 800px) {
+      .register-container .register-btn {
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%); } }

@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Play Test</title>
 
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700|Roboto:300,400,700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="/styles/css/main.css">
 	<style>
 		.autocomplete {
@@ -40,9 +41,23 @@
 	crossorigin="anonymous"></script>
 </head>
 <body>
-	<% if(currentUser){ %>
-		<p>Signed in as <%= currentUser.username %></p>
-	<% } %>
+	<header>
+		<% if(currentUser){ %>
+			<p>Signed in as <%= currentUser.username %></p>
+			<br>
+			<a href="<%= baseUrl %>/logout">Logout</a>
+		<% } else { %>
+			<form class="login-form" action="<%= baseUrl %>/login" method="POST">
+				<input type="text" name="username" placeholder="username" value="Steve">
+				<input type="password" name="password" placeholder="password" value="123">
+				<input class="login-btn" type="submit" value="Login">
+			</form>
+			<div class="register-container">
+				<a class="register-btn" href="<%= baseUrl %>/register">Register</a>
+			</div>
+		<% } %>
+	</header>
+
 	<% if(error && error.length > 0){ %>
 		<div role="alert">
 			<%= error %>
