@@ -17,12 +17,12 @@
 <% } else if (currentUser && decks && decks.length > 0) { %>
     <p>Your Decks</p>
     <% decks.forEach(function(deck) { %>
-        <a href="<%= baseUrl %>/deck/<%= deck._id %>/edit"><%= deck.name %></a>
+        <a href="<%= baseUrl %>/deck/edit?deck=<%= encodeURIComponent(deck.id) %>"><%= deck.name %></a>
     <% }); %>
 <% } else if (decks && decks.length > 0) { %>
     <p>Browse our most recent decks or sign in to create your own.</p>
     <% decks.forEach(function(deck) { %>
-        <a href="<%= baseUrl %>/deck/<%= deck._id %>"><%= deck.name %></a>
+        <a href="<%= baseUrl %>/deck/view/<%= deck._id %>"><%= deck.name %></a>
     <% }); %>
 <% } %>
 

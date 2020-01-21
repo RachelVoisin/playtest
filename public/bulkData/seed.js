@@ -3,9 +3,9 @@ var mongoose = require("mongoose"),
 
 mongoose.connect("mongodb://localhost/playtest");
 
-// https://archive.scryfall.com/json/scryfall-oracle-cards.json   download the file and put it in root
+// https://archive.scryfall.com/json/scryfall-oracle-cards.json   download the file and put it in bulkData
 
-var Card = require("./models/card");
+var Card = require("../../models/card");
 	
 Card.remove({}, function(err){
 	if(err){
@@ -14,24 +14,17 @@ Card.remove({}, function(err){
 	else {
         console.log("removed cards");
         
-        var rawdata   = fs.readFileSync('./scryfall-oracle-cards.json');
+        var rawdata   = fs.readFileSync('public/bulkData/scryfall-oracle-cards.json');
         var cardsJSON = JSON.parse(rawdata);
 
         const types = ["Artifact", "Creature", "Enchantment", "Instant", "Land", "Planeswalker", "Sorcery"];
 
         cardsJSON.forEach(function(card){
             var name     = card.name || null,
-                image    = "",
-                typeLine = card.typeLine || null,
+                typeLine = card.type_line || null,
                 manaCost = card.mana_cost || null,
                 cmc      = card.cmc || 0, 
                 oracleid = card.oracle_id;
-
-            if (card.image_uris) {
-                image = card.image_uris.normal || null
-            } else {
-                image = null;
-            }
 
             var cardTypes = [];
             if(typeLine != null) {
@@ -76,13 +69,38 @@ Card.remove({}, function(err){
 
             var newCard = new Card({
                 name: name,
-                image: image,
                 types: cardTypes,
                 cmc: cmc,
                 oracleid: oracleid,
                 manaCost: manaCost,
                 manaSymbols: manaSymbols,
             });
+
+            if (card.image_uris){
+                newCard.image = card.image_uris.normal;
+                newCard.flip = false;
+                newCard.flipImage = null;
+            } else if (card.card_faces) {
+                newCard.image = jsonCard.card_faces[0].image_uris.normal;
+                newCard.flip = true;
+                newCard.flipImage = jsonCard.card_faces[1].image_uris.normal;
+            }
+
+            if (card.color_identity.length == 0) {
+                newCard.colorIdentity = ["C"];
+            } else {
+                newCard.colorIdentity = card.color_identity;
+            }
+
+            var legalFormats = [];
+
+            for (let key in card.legalities) {
+                if (card.legalities[key] == "legal") {
+                    legalFormats.push(key);
+                }
+            }
+
+            newCard.legalFormats = legalFormats;
                 
             Card.create(newCard, function(err, newlyCreated){
                 if(err){

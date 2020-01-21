@@ -1,32 +1,101 @@
 <%- include('../partials/header'); %>
 
-<p><%= deck.name %></p>
-<p><%= deck.format %></p>
-<p><%= deck.dateUpdated %></p>
-<div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
-
-<form action="/deck/<%= deck._id %>/add" method="POST">
-    <input type="text" name="name" placeholder="Card Name">
-    <input type="submit" value="Add Card">
-    <!-- preform actions using ajax! -->
-
-
-    <!--document.getElementById('foo').onkeypress = function(e){
-    if (!e) e = window.event;
-    var keyCode = e.keyCode || e.which;
-    if (keyCode == '13'){
-      // Enter pressed
-      return false;
-    }
-  }-->
-</form>
-
-<div>
-    <% deck.deckCards.forEach(function(card){ %>
-        <p><%= card.name %></p>
-    <% }); %>
+<div class="deckDetails">
+    <p data-bind="text: name"></p>
+    <p data-bind="text: format"></p>
+    <div data-bind="style: { background: color}">Color</div>
+    <img data-bind="attr: {src: image}">
 </div>
 
-<!-- <script src="/scripts/deck-actions.js"></script> -->
+<div class="deckDetailsEdit">
+    <p>Deck Name: <input class="jsDeckName" data-bind="value: tempName" /></p>
+    <p>Format: <select class="jsFormat" data-bind="value: tempFormat">
+        <option value="EDH/Commander">EDH/Commander</option>
+        <option value="Standard">Standard</option>
+        <option value="Modern">Modern</option>
+    </select></p>
+    <p>Color: <input type="color" class="jsColor" data-bind="value: tempColor"></p>
+    <p>Deck Image Url: <input class="jsImage" data-bind="value: tempImage" /></p>
+
+    <button data-bind="click: editDetails">Save</button>
+    <button data-bind="click: cancelEditDetails">Cancel</button>
+</div>
+
+<a href="<%= baseUrl %>/deck/massadd/<%= deckId %>">Mass Add</a>
+
+<select class="jsSort" data-bind="value: sortType, event:{change: sortChanged }">
+    <option value="type">type</option>
+    <option value="cmc">cmc</option>
+    <option value="color">color</option>
+</select>
+
+<span data-bind="visible: sortType() == 'type'">
+    <label>Overlap Categories: </label>
+    <input type="checkbox" data-bind="checked: overlapCategories, click: sortChanged"> 
+</span>
+
+<form class="autocomplete jsAddCardForm" autocomplete="OFF">
+    <input id="jsCardInput" type="text" name="name" placeholder="Card Name" data-bind="event: { keyup: enteredName }">
+    <button data-bind="click: addCard">Add Card</button>
+</form>
+
+<select class="jsCardAction">
+    <option value="remove">Delete</option>
+    <option value="move">Move to Maybeboard</option>
+    <option value="cut">Mark as Cuttable</option>
+    <option value="buy">Mark as Not Owned</option>
+</select>   
+<button data-bind="click: editCards">Go!</button> 
+
+<table data-bind="foreach: sortedCards">
+    <thead>
+        <tr>
+            <th data-bind="text: subtitle"></th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: cards">
+        <tr data-bind="class: id">
+            <!-- should find a way to save checked state -->
+            <td><input type="checkbox" class="cardCheckbox" data-bind="value: id"></td>
+            <td>
+                <button data-bind="click: $root.increaseCard">+</button>
+                <span data-bind="text: amount"></span>
+                <button data-bind="click: $root.decreaseCard">-</button>
+            </td>
+            <td data-bind="text: name"></td>
+            <td>
+                <button data-bind="click: $root.changeCut, text: cut"></button>
+                <button data-bind="click: $root.changeBuy, text: buy"></button>
+            </td>
+        </tr> 
+    </tbody>
+</table>
+
+<select class="jsMaybeCardAction">
+    <option value="remove">Delete</option>
+    <option value="move">Move to Main Board</option>
+    <option value="buy">Mark as Not Owned</option>
+</select>   
+<button data-bind="click: editMaybeCards">Go!</button> 
+<table>
+	<tbody data-bind="foreach: maybeCards">
+		<tr data-bind="class: id">
+			<td><input type="checkbox" class="maybeCardCheckbox" data-bind="value: id"></td>
+            <td data-bind="text: name"></td>
+            <td><button data-bind="click: $root.removeCard">-</button></td>
+			<td>
+				<button data-bind="click: $root.changeBuy, text: buy"></button>
+			</td>
+	</tbody>
+</table>
+
+<script src="/scripts/autocomplete.js"></script>
+<script src="/bulkData/cardsList.js"></script>
+<script>
+	autocomplete(document.getElementById("jsCardInput"), data);
+</script>
+
+<script src="/scripts/knockout-3.5.1.js"></script>
+<script src="/scripts/deck-actions.js"></script>
 
 <%- include('../partials/footer'); %>

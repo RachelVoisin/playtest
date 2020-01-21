@@ -15,12 +15,8 @@ var bodyParser = require("body-parser"),
 var User = require("./models/user"),
     Deck = require("./models/deck");
 
-//var middleware = require("./middleware");
-
-//var seedDB = require("./seeds");
-//seedDB();
-
-var deckRoutes = require("./routes/deck");
+var deckRoutes    = require("./routes/deck"),
+    deckApiRoutes = require("./routes/deckapi");
 
 const PORT = process.env.PORT || 3000
 
@@ -66,7 +62,6 @@ app.get("/", function (req, res) {
             if(err){
                 console.log(err);
             } else {
-                console.log(typeof(recentDecks));
                 res.render("home", {decks: recentDecks});
             }
         });
@@ -117,7 +112,11 @@ app.get("/logout", function (req, res) {
     res.redirect("/");
 });
 
-// app.use routes files
 app.use(deckRoutes);
+app.use(deckApiRoutes);
+
+app.get('*', function (req, res) {
+    res.redirect('/');
+});
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
