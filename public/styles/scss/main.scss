@@ -20,9 +20,38 @@
     }
 
     .submit-btn {
+        display: block;
         background-color: $accent;
         padding: 8px 16px;
         font-size: 1.2em;
-        display: block;
     }
+}
+
+.home-page-subtitle {
+    margin-top: 35px;
+}
+
+.deck-preview-container {
+    @include grid($column-gap: 25px);
+    flex-wrap: wrap;
+}
+
+.deck-preview {
+    width: 200px;
+
+    .deck-image-container {
+        width: 100%;
+        height: 150px;
+    }
+
+    .deck-name {
+        text-align: center;
+    }
+}
+
+.new-deck-button {
+    background-color: $accent;
+    padding: 8px 16px;
+    font-size: 1.2em;
+    color: white;
 }

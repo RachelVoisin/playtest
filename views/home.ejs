@@ -1,23 +1,43 @@
 <%- include('./partials/header'); %>
 
-<% if(currentUser){ %>
-    <a href="<%= baseUrl %>/deck/new">+ New Deck</a>
-<% } %>
-
-<% if (currentUser && (!decks || decks.length == 0)) { %>
-    <p>You have not created any decks!</p>
-<% } else if (!decks || decks.length == 0) { %>
-    <p>There are no decks on this website!</p>
-<% } else if (currentUser && decks && decks.length > 0) { %>
-    <p>Your Decks</p>
-    <% decks.forEach(function(deck) { %>
-        <a href="<%= baseUrl %>/deck/edit?deck=<%= encodeURIComponent(deck.id) %>"><%= deck.name %></a>
-    <% }); %>
-<% } else if (decks && decks.length > 0) { %>
-    <p>Browse our most recent decks or sign in to create your own.</p>
-    <% decks.forEach(function(deck) { %>
-        <a href="<%= baseUrl %>/deck/view/<%= deck._id %>"><%= deck.name %></a>
-    <% }); %>
-<% } %>
+<main>
+    <% if(currentUser){ %>
+        <a class="new-deck-button" href="<%= baseUrl %>/deck/new">+ New Deck</a>
+    <% } %>
+    
+    <% if (currentUser && (!decks || decks.length == 0)) { %>
+        <p>You have not created any decks!</p>
+    <% } else if (!decks || decks.length == 0) { %>
+        <p>There are no decks on this website!</p>
+    <% } else if (currentUser && decks && decks.length > 0) { %>
+        <p class="home-page-subtitle">Your Decks</p>
+        <div class="deck-preview-container">
+            <% decks.forEach(function(deck) { %>
+                <div class="deck-preview">
+                    <a href="<%= baseUrl %>/deck/edit?deck=<%= encodeURIComponent(deck.id) %>">
+                        <div class="deck-image-container">
+                            <img src="<%= deck.image %>" onError="this.onerror=null;this.src='/images/placeholder.png';">
+                        </div>
+                        <p class="deck-name"><%= deck.name %></p>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+    <% } else if (decks && decks.length > 0) { %>
+        <p class="home-page-subtitle">Browse our most recent decks or sign in to create your own.</p>
+        <div class="deck-preview-container">
+            <% decks.forEach(function(deck) { %>
+                <div class="deck-preview">
+                    <a href="<%= baseUrl %>/deck/view/<%= deck._id %>">
+                        <div class="deck-image-container">
+                            <img src="<%= deck.image %>" onError="this.onerror=null;this.src='/images/placeholder.png';">
+                        </div>
+                        <p class="deck-name"><%= deck.name %></p>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+    <% } %>
+</main>
 
 <%- include('./partials/footer'); %>
