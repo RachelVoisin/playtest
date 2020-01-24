@@ -9,11 +9,15 @@
         z-index: 1;
     }
 
-    .edit-btn {
-        @include icon($icon-pencil);
+    .edit-btn,
+    .playtest-btn {
         z-index: 10;
         cursor: pointer;
         position: relative;
+    }
+
+    .edit-btn {
+        @include icon($icon-pencil);
     }
 }
 
