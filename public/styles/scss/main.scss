@@ -7,6 +7,15 @@
 @import 'components/_header.scss';
 @import 'components/_deck.scss';
 
+form {
+    .submit-btn {
+        display: block;
+        background-color: $accent;
+        padding: 8px 16px;
+        font-size: 1.2em;
+    }
+}
+
 .mass-add {
     .warning {
         @include icon($icon: $icon-warning, $use-before: true);
@@ -17,13 +26,6 @@
     textarea {
         height: 400px;
         width: 50%;
-    }
-
-    .submit-btn {
-        display: block;
-        background-color: $accent;
-        padding: 8px 16px;
-        font-size: 1.2em;
     }
 }
 
@@ -54,4 +56,12 @@
     padding: 8px 16px;
     font-size: 1.2em;
     color: white;
+}
+
+.new-deck-form {
+    margin-left: 50px;
+    
+    > * {
+        margin-bottom: 15px;
+    }
 }

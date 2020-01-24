@@ -59,6 +59,12 @@ input[type=checkbox] {
     }
 }
 
+input[type=color] {
+    background: none;
+    border: 2px solid $light;
+    border-radius: 3px;
+}
+
 .checkbox-label {
     cursor: pointer;
 }
