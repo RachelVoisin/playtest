@@ -339,3 +339,19 @@ header {
     padding-right: 10px;
     padding-left: 5px;
     flex-grow: 1; }
+
+.mass-add .warning::before {
+  font-family: "icon-font";
+  font-size: 0.9em;
+  padding-right: 2px;
+  content: ""; }
+
+.mass-add-form textarea {
+  height: 400px;
+  width: 50%; }
+
+.mass-add-form .submit-btn {
+  background-color: #F58F7C;
+  padding: 8px 16px;
+  font-size: 1.2em;
+  display: block; }

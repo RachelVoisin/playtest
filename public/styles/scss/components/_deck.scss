@@ -1,0 +1,202 @@
+.deck-header {
+    height: 250px;
+    position: relative;
+    display: flex;
+
+    .header-overlay {
+        @include overlay;
+        border-radius: 15px;
+        z-index: 1;
+    }
+
+    .edit-btn {
+        @include icon($icon-pencil);
+        z-index: 10;
+        cursor: pointer;
+        position: relative;
+    }
+}
+
+.deck-image-container {
+    @include fittedImage;
+    height: 100%;
+    width: 30%;
+
+    .image-overlay {
+        @include overlay;
+        background: linear-gradient(270deg, #fff 0%, rgba(255,255,255,0) 5%);
+    }
+}
+
+.deck-text {
+    padding: 16px;
+
+    p {
+        padding-left: 16px;
+    }
+}
+
+.deck-sort-options {
+    text-align: right;
+}
+
+.autocomplete {
+    @include grid($column-gap: 8px);
+    position: relative;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    width: calc(30% - 8px);
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff; 
+    border-bottom: 1px solid #d4d4d4; 
+}
+
+.autocomplete-items div:hover {
+    background-color: #e9e9e9; 
+}
+
+.autocomplete-active {
+    background-color: #00b5ad !important; 
+    color: #fff; 
+}
+
+.card-input {
+    width: calc(30% - 24px);
+}
+
+.card-add-btn {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    background-color: $accent;
+}
+
+.mass-add-link {
+    @include icon($icon-paste);
+    display: block;
+    padding-top: 16px;
+}
+
+.deck-action-options {
+    @include grid($column-gap: 8px);
+}
+
+.card-list-wrapper {
+    @include grid($column-gap: 25px);
+    flex-wrap: wrap;
+}
+
+.card-list-section {
+    width: 30%;
+
+    @media screen and (max-width: $break-tablet) {
+        width: 45%;
+    }
+
+    @media screen and (max-width: $break-small) {
+        width: 100%;
+    }
+}
+
+.card-list-subtitle {
+    margin-bottom: 0;
+}
+
+.card-row {
+    @include grid();
+    align-items: center;
+
+    .card-name {
+        padding-right: 10px;
+        padding-left: 5px;
+        flex-grow: 1;
+    }
+}
+
+.card-amount-btns {
+    margin-left: 5px;
+    margin-right: 10px;
+
+    .increase-button {
+        @include icon($icon-plus);
+        margin-bottom: 2px;
+    }
+
+    .decrease-button {
+        @include icon($icon-minus);
+    }
+
+    .increase-button,
+    .decrease-button {
+        display: block;
+        padding: 1px 3px;
+
+        &::after {
+            padding: 0;
+            font-size: 0.6em;
+            vertical-align: +10%;
+        }
+    }
+}
+
+.card-cut-button,
+.card-buy-button,
+.card-trash-button {
+    background: none;
+    color: $medium;
+    opacity: 0.3;
+    padding: 0;
+
+    &.flagged {
+        opacity: 1;
+    }
+}
+
+.card-cut-button {
+    @include icon($icon-scissors);
+}
+
+.card-buy-button {
+    @include icon($icon-cart);
+}
+
+.card-trash-button {
+    @include icon($icon-trash);
+}
+
+.maybe-board-wrapper {
+    @include grid;
+    flex-wrap: wrap;
+
+    .card {
+        @include grid;
+        align-items: baseline;
+        width: 30%;
+        margin-right: 25px;
+
+        @media screen and (max-width: $break-tablet) {
+            width: 45%;
+        }
+
+        @media screen and (max-width: $break-small) {
+            width: 100%;
+        }
+    }
+
+    .card-name {
+        padding-right: 10px;
+        padding-left: 5px;
+        flex-grow: 1;
+    }
+}
