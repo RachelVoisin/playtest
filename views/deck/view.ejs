@@ -1,33 +1,60 @@
 <%- include('../partials/header'); %>
 
-<p><%= deck.name %></p>
-<p><%= deck.format %></p>
-<p><%= deck.dateUpdated %></p>
-<div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
+<div class="deck-header">
+    <div class="deck-image-container">
+        <img src="<%= deck.image %>" onError="this.onerror=null;this.src='/images/placeholder.png';"/>
+        <div class="image-overlay"></div>
+    </div>
+    <div class="deck-text">
+        <h2><%= deck.name %></h2>
+        <p><%= deck.format %></p>
+        <p>Last Updated: <%= deck.dateUpdated %></p>
+        <p><a href="<%= baseUrl %>/deck/playtest/<%= deck._id %>">Play Test</a></p>
+    </div>
+    <div class="header-overlay" style="background: linear-gradient(0deg, <%= deck.color %> 0%, rgba(255,255,255,0) 29%);"></div>
+</div>
 
-<div>
+<div class="deck-sort-options">
+    <label>Sort By: </label>
     <select class="jsSort">
         <option value="type">type</option>
         <option value="cmc">cmc</option>
         <option value="color">color</option>
     </select>
 
-    <label>Overlap Categories: </label>
-    <input class="jsOverlap" type="checkbox" checked> 
+    <label for="jsOverlap" class="checkbox-label">
+        <input id="jsOverlap" class="jsOverlap" type="checkbox" checked>
+        <span>Overlap Categories: </span>
+    </label>
 </div>
 
-<div>
+<div class="card-list-wrapper">
     <% sortedCards.forEach(function(section){ %>
-        <h3><%= section.subtitle %></h3>
-        <% section.cards.forEach(function(card){ %>
-            <p><%= card.name %></p>
-        <% }); %>
+        <div class="card-list-section">
+            <h3 class="card-list-subtitle"><%= section.subtitle %></h3>
+            <div class="card-list">
+                <% section.cards.forEach(function(card){ %>
+                    <div class="card-row">
+                        <div class="card-amount">
+                            <p><span><%= card.number %></span>x</p>
+                        </div>
+                        <div class="card-name">
+                            <p><%= card.name %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
     <% }); %>
 </div>
-<br />
-<div>
+
+<h3 class="maybeboard-subtitle">Maybeboard</h3>
+
+<div class="maybe-board-wrapper">
     <% deck.maybeCards.forEach(function(card){ %>
-        <p><%= card.name %></p>
+        <div class="card">
+            <p class="card-name"><%= card.name %></p>
+        </div>
     <% }); %>
 </div>
 

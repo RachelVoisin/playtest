@@ -1,0 +1,58 @@
+@mixin base-text {
+    font-size: $base-font-size;
+    font-family: $base-font;
+    color: $dark;
+}
+
+@mixin grid($column-gap: 0px, $row-gap: 0px) {
+    display: flex;
+    margin-right: -#{$column-gap};
+    margin-bottom: -#{$row-gap};
+
+    > * {
+        margin-right: $column-gap;
+        margin-bottom: $row-gap;
+    }
+}
+
+@mixin icon($icon: "", $use-before: false) {
+    @if $use-before {
+        &::before {
+            font-family: $icon-font;
+            font-size: 0.9em;
+            padding-right: 2px;
+            content: $icon;
+        }
+    } @else {
+        &::after {
+            font-family: $icon-font;
+            font-size: 0.9em;
+            padding-left: 2px;
+            content: $icon;
+        }
+    }
+}
+
+@mixin fittedImage {
+    overflow: hidden;
+    position: relative;
+
+    img {
+        vertical-align: middle;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%);
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
+    }
+}
+
+@mixin overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

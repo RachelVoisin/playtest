@@ -23,6 +23,7 @@ function DeckViewModel() {
 
     self.sortType          = ko.observable("type");
     self.overlapCategories = ko.observable(true);
+    self.showEdit          = ko.observable(false);
 
     self.name   = ko.observable();
     self.format = ko.observable();
@@ -36,6 +37,10 @@ function DeckViewModel() {
 
     self.jsonData = ko.observable();
     self.cardJsonData = ko.observable();
+
+    self.colorGradient  = ko.computed(function() {
+        return 'linear-gradient(0deg, ' + self.color() + ' 0%, rgba(255,255,255,0) 29%)';
+    }, this);
 
     self.sortedCards = ko.computed(function() {
         if(self.cardJsonData()) {
@@ -81,6 +86,10 @@ function DeckViewModel() {
             self.update();
         } 
         return true;
+    }
+
+    self.toggleShowEdit = function() {
+        self.showEdit(!self.showEdit());
     }
 
     self.update = function() {
@@ -153,6 +162,11 @@ function DeckViewModel() {
                     self.format(newDeckFormat);
                     self.color(self.tempColor());
                     self.image(self.tempImage());
+
+                    if(!self.image() || self.image() == "") {
+                        self.image('/images/placeholder.png');
+                    }
+
                     // hide 
                 }
             },
@@ -359,10 +373,6 @@ function DeckViewModel() {
         });
     }
 
-    self.cancelEditDetails = function() {
-        // should probably just put this inline
-    }
-
     $.ajaxSetup({async:false});
     self.update();
     $.ajaxSetup({async:true});
@@ -375,7 +385,11 @@ function DeckViewModel() {
     self.tempName(self.jsonData().name);
     self.tempFormat(self.jsonData().format);
     self.tempColor(self.jsonData().color); 
-    self.tempImage(self.jsonData().image);   
+    self.tempImage(self.jsonData().image);
+    
+    if(!self.image() || self.image() == "") {
+        self.image('/images/placeholder.png');
+    }
 }
 
 ko.applyBindings(new DeckViewModel());

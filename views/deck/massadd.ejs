@@ -1,26 +1,28 @@
 <%- include('../partials/header'); %>
 
-<div>
-    WARNING: THIS ACTION WILL ERASE ALL PREVIOUSLY-ADDED CARDS
+<main>
+    <div class="mass-add">
+        <p class="warning">WARNING: THIS ACTION WILL ERASE ALL PREVIOUSLY-ADDED CARDS</p>
+        <br>
+        <p>From your deck's tappedout page, click "edit" and copy entire list to your clipboard</p>
+        <p>Paste the list into the designated text box (be sure to include your main board and your maybeboard).</p>
+        <br>
+        <p>Flags can be left in place. You do not need to remove them.</p>
+        <p>Lines that do not contain amount (eg. 1x) or a valid card name will be disregarded.</p>
+    </div>
 
-    From your deck's tappedout page, click "edit" and copy entire list to your clipboard 
-    Paste the list into the designated text box (be sure to include your main board and your maybeboard).
-
-    Upon clicking Submit, your deck's entire main board and maybeboard will be replaced with the contents of these text boxes.
-
-    Flags can be left in place. You do not need to remove them. 
-
-    Lines that do not contain amount (eg. 1x) or a valid card name will be disregarded.
-</div>
-
-<form action="/deck/massadd/<%= deckId %>" method="POST">
-    <label for="mainboard">Main Board:</label>
-    <textarea name="mainboard" style="height: 400px; width: 500px;"></textarea>
-
-    <label for="maybeboard">MaybeBoard:</label>
-    <textarea name="maybeboard" style="height: 400px; width: 500px;"></textarea>
-    
-    <input type="submit" value="Submit">
-</form>
+    <form class="mass-add-form" action="/deck/massadd/<%= deckId %>" method="POST">
+        <label for="mainboard">
+            <h3>Main Board:</h3>
+        </label>
+        <textarea name="mainboard"></textarea>
+        <br>
+        <label for="maybeboard">
+            <h3>MaybeBoard:</h3>
+        </label>
+        <textarea name="maybeboard"></textarea>
+        <input class="submit-btn" type="submit" value="Submit">
+    </form>
+</main>
 
 <%- include('../partials/footer'); %>

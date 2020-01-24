@@ -1,0 +1,55 @@
+header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    padding: 5px;
+    border-bottom: 1px solid $light;
+}
+
+.login-form {
+    @include grid($column-gap: 4px);
+
+    @media screen and (max-width: $break-tablet) {
+        width: 50%;
+        flex-wrap: wrap;
+
+        > * {
+            flex-grow: 1;
+            width: 30%;
+        }
+    }
+
+    .login-btn {
+        margin-top: 1px;
+        margin-bottom: 1px;
+
+        @media screen and (max-width: $break-tablet) {
+            padding: 4px;
+            margin-top: 2px;
+        }
+    }
+}
+
+.register-container {
+    position: relative;
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid $dark;
+    min-width: 10%;
+
+    @media screen and (max-width: $break-tablet) {
+        width: 50%
+    }
+
+    .register-btn {
+        @include icon($icon: $icon-arrow);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+
+        @media screen and (max-width: $break-tablet) {
+            left: 50%;
+            transform: translateY(-50%) translateX(-50%);
+        }
+    }
+}

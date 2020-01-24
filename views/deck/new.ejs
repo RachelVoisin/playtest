@@ -1,18 +1,29 @@
 <%- include('../partials/header'); %>
 
-<form action="/deck/new" method="POST">
-    <input type="text" name="name" placeholder="Deck Name">
-    <input type="text" name="image" placeholder="Featured Image Url">
-    <label for="color">
-        Featured Color
-    </label>
-    <input type="color" name="color" value="#edc112">
-    <select name="format">
-        <option value="EDH/Commander">EDH/Commander</option>
-        <option value="Standard">Standard</option>
-        <option value="Modern">Modern</option>
-    </select>
-    <input type="submit" value="Submit">
-</form>
+<main>
+    <form class="new-deck-form" action="/deck/new" method="POST">
+        <div>
+            <label for="name">Deck Name: </label>
+            <input type="text" name="name" placeholder="Deck Name">
+        </div>
+        <div>
+            <label for="image">Featured Image URL: </label>
+            <input type="text" name="image" placeholder="Featured Image Url">
+        </div>
+        <div>
+            <label for="color">Featured Color: </label>
+            <input type="color" name="color" value="#edc112">
+        </div>
+        <div>
+            <label for="format">Format: </label>
+            <select name="format">
+                <option value="EDH/Commander">EDH/Commander</option>
+                <option value="Standard">Standard</option>
+                <option value="Modern">Modern</option>
+            </select>
+        </div>
+        <input class="submit-btn" type="submit" value="Submit">
+    </form>
+</main>
 
 <%- include('../partials/footer'); %>

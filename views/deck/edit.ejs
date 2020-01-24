@@ -1,13 +1,20 @@
 <%- include('../partials/header'); %>
 
-<div class="deckDetails">
-    <p data-bind="text: name"></p>
-    <p data-bind="text: format"></p>
-    <div data-bind="style: { background: color}">Color</div>
-    <img data-bind="attr: {src: image}">
+<div class="deck-header">
+    <div class="deck-image-container">
+        <img data-bind="attr: {src: image}"/>
+        <div class="image-overlay"></div>
+    </div>
+    <div class="deck-text">
+        <h2 data-bind="text: name"></h2>
+        <p data-bind="text: format"></p>
+        <p><a class="edit-btn" data-bind="click: toggleShowEdit">Edit</a></p>
+        <p><a href="<%= baseUrl %>/deck/playtest/<%= deckId %>">Play Test</a></p>
+    </div>
+    <div class="header-overlay" data-bind="style: { background: colorGradient}"></div>
 </div>
 
-<div class="deckDetailsEdit">
+<div class="deckDetailsEdit" data-bind="visible: showEdit">
     <p>Deck Name: <input class="jsDeckName" data-bind="value: tempName" /></p>
     <p>Format: <select class="jsFormat" data-bind="value: tempFormat">
         <option value="EDH/Commander">EDH/Commander</option>
@@ -18,76 +25,95 @@
     <p>Deck Image Url: <input class="jsImage" data-bind="value: tempImage" /></p>
 
     <button data-bind="click: editDetails">Save</button>
-    <button data-bind="click: cancelEditDetails">Cancel</button>
+    <button data-bind="click: toggleShowEdit">Cancel</button>
 </div>
 
-<a href="<%= baseUrl %>/deck/massadd/<%= deckId %>">Mass Add</a>
+<main>
+    <form class="autocomplete jsAddCardForm" autocomplete="OFF">
+        <input id="jsCardInput" class="card-input" type="text" name="name" placeholder="Card Name" data-bind="event: { keyup: enteredName }">
+        <button class="card-add-btn" data-bind="click: addCard">Add Card</button>
+    </form>
+    
+    <a class="mass-add-link" href="<%= baseUrl %>/deck/massadd/<%= deckId %>">Mass Add</a>
 
-<select class="jsSort" data-bind="value: sortType, event:{change: sortChanged }">
-    <option value="type">type</option>
-    <option value="cmc">cmc</option>
-    <option value="color">color</option>
-</select>
+    <div class="deck-sort-options">
+        <label>Sort By: </label>
+        <select class="jsSort" data-bind="value: sortType, event:{change: sortChanged }">
+            <option value="type">type</option>
+            <option value="cmc">cmc</option>
+            <option value="color">color</option>
+        </select>
 
-<span data-bind="visible: sortType() == 'type'">
-    <label>Overlap Categories: </label>
-    <input type="checkbox" data-bind="checked: overlapCategories, click: sortChanged"> 
-</span>
+        <label for="overlapCheckbox" class="checkbox-label">
+            <input id="overlapCheckbox" type="checkbox" data-bind="checked: overlapCategories, click: sortChanged">
+            <span>Overlap Categories: </span>
+        </label>
+    </div>
 
-<form class="autocomplete jsAddCardForm" autocomplete="OFF">
-    <input id="jsCardInput" type="text" name="name" placeholder="Card Name" data-bind="event: { keyup: enteredName }">
-    <button data-bind="click: addCard">Add Card</button>
-</form>
+    <div class="deck-action-options">
+        <select class="jsCardAction">
+            <option value="remove">Delete</option>
+            <option value="move">Move to Maybeboard</option>
+            <option value="cut">Mark as Cuttable</option>
+            <option value="buy">Mark as Not Owned</option>
+        </select>   
+        <button data-bind="click: editCards">Go!</button> 
+    </div>
 
-<select class="jsCardAction">
-    <option value="remove">Delete</option>
-    <option value="move">Move to Maybeboard</option>
-    <option value="cut">Mark as Cuttable</option>
-    <option value="buy">Mark as Not Owned</option>
-</select>   
-<button data-bind="click: editCards">Go!</button> 
+    <div class="card-list-wrapper" data-bind="foreach: sortedCards">
+        <div class="card-list-section">
+            <h3 class="card-list-subtitle" data-bind="text: subtitle"></h3>
+            <div class="card-list" data-bind="foreach: cards">
+                <div class="card-row" data-bind="class: id">
+                    <div>
+                        <!-- should find a way to save checked state -->
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="cardCheckbox" data-bind="value: id">
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="card-amount-btns">
+                        <button class="increase-button" data-bind="click: $root.increaseCard"></button>
+                        <button class="decrease-button" data-bind="click: $root.decreaseCard"></button>
+                    </div>
+                    <div class="card-amount">
+                        <p><span data-bind="text: amount"></span>x</p>
+                    </div>
+                    <div class="card-name">
+                        <p data-bind="text: name"></p>
+                    </div>
+                    <div>
+                        <button class="card-cut-button" data-bind="click: $root.changeCut, css: { flagged: cut }"></button>
+                        <button class="card-buy-button" data-bind="click: $root.changeBuy, css: { flagged: buy }"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<table data-bind="foreach: sortedCards">
-    <thead>
-        <tr>
-            <th data-bind="text: subtitle"></th>
-        </tr>
-    </thead>
-    <tbody data-bind="foreach: cards">
-        <tr data-bind="class: id">
-            <!-- should find a way to save checked state -->
-            <td><input type="checkbox" class="cardCheckbox" data-bind="value: id"></td>
-            <td>
-                <button data-bind="click: $root.increaseCard">+</button>
-                <span data-bind="text: amount"></span>
-                <button data-bind="click: $root.decreaseCard">-</button>
-            </td>
-            <td data-bind="text: name"></td>
-            <td>
-                <button data-bind="click: $root.changeCut, text: cut"></button>
-                <button data-bind="click: $root.changeBuy, text: buy"></button>
-            </td>
-        </tr> 
-    </tbody>
-</table>
+    <h3 class="maybeboard-subtitle">Maybeboard</h3>
 
-<select class="jsMaybeCardAction">
-    <option value="remove">Delete</option>
-    <option value="move">Move to Main Board</option>
-    <option value="buy">Mark as Not Owned</option>
-</select>   
-<button data-bind="click: editMaybeCards">Go!</button> 
-<table>
-	<tbody data-bind="foreach: maybeCards">
-		<tr data-bind="class: id">
-			<td><input type="checkbox" class="maybeCardCheckbox" data-bind="value: id"></td>
-            <td data-bind="text: name"></td>
-            <td><button data-bind="click: $root.removeCard">-</button></td>
-			<td>
-				<button data-bind="click: $root.changeBuy, text: buy"></button>
-			</td>
-	</tbody>
-</table>
+    <div class="deck-action-options">
+        <select class="jsMaybeCardAction">
+            <option value="remove">Delete</option>
+            <option value="move">Move to Main Board</option>
+            <option value="buy">Mark as Not Owned</option>
+        </select>   
+        <button data-bind="click: editMaybeCards">Go!</button> 
+    </div>
+
+    <div class="maybe-board-wrapper" data-bind="foreach: maybeCards">
+        <div class="card" data-bind="class: id">
+            <label class="checkbox-label">
+                <input type="checkbox" class="maybeCardCheckbox" data-bind="value: id">
+                <span></span>
+            </label>
+            <p class="card-name" data-bind="text: name"></p>
+            <button class="card-trash-button" data-bind="click: $root.removeCard"></button>
+            <button class="card-buy-button" data-bind="click: $root.changeBuy, css: { flagged: buy }"></button>
+        </div>
+    </div>
+</main>
 
 <script src="/scripts/autocomplete.js"></script>
 <script src="/bulkData/cardsList.js"></script>

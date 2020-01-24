@@ -1,0 +1,70 @@
+body {
+    @include base-text;
+    margin: 0;
+}
+
+main {
+    padding: 24px;
+}
+
+h1, h2, h3, h4 {
+    font-family: $header-font;
+    font-weight: 400;
+}
+
+a {
+    color: $medium;
+    font-family: $header-font;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+input, button, textarea, select {
+    @include base-text;
+}
+
+input[type=submit], button, select {
+    background: $medium;
+    color: white;
+    border: none;
+    font-size: $small-font-size;
+}
+
+select {
+    padding: 2px;
+}
+
+input[type=text], input[type=password], textarea {
+    padding: 4px 8px;
+    border: 2px solid $light;
+}
+
+input[type=checkbox] {
+    position:absolute;
+    left:-999px;
+
+    + span {
+        @include icon($icon-checkbox-unchecked);
+        color: $medium;
+
+        &::after {
+            vertical-align: -5%;
+        }
+    }
+
+    &:checked {
+        + span {
+            @include icon($icon-checkbox-checked);
+        }
+    }
+}
+
+input[type=color] {
+    background: none;
+    border: 2px solid $light;
+    border-radius: 3px;
+}
+
+.checkbox-label {
+    cursor: pointer;
+}
