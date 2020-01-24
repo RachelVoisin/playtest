@@ -392,3 +392,6 @@ form .submit-btn {
   margin-left: 50px; }
   .new-deck-form > * {
     margin-bottom: 15px; }
+
+.dragSource {
+  color: #D6D6D6; }

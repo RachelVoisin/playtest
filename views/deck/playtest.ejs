@@ -1,0 +1,78 @@
+<%- include('../partials/header'); %>
+
+<button data-bind="click: restart">Restart</button>
+
+<div style="height:300px;width:100%;border:1px solid black;" class="play-field" data-bind="event:{
+    dragover: function(data, event){
+       event.preventDefault();
+    },
+    drop: function(data, event){
+       $root.moveCardToPlay();
+       event.preventDefault();
+    }
+}">
+    <div class="in-play" data-bind="foreach: inPlay">
+        <div>
+            <span data-bind='text: name'></span>
+        </div>
+    </div>
+</div>
+
+<div style="height:300px;width:45%;border:1px solid black;display:inline-block;" class="graveyard" data-bind="event:{
+    dragover: function(data, event){
+       event.preventDefault();
+    },
+    drop: function(data, event){
+       $root.moveCardToGraveyard();
+       event.preventDefault();
+    }
+}">
+    <div data-bind="foreach: graveyard">
+        <div>
+            <span data-bind='text: name'></span>
+        </div>
+    </div>
+</div>
+
+<div style="height:300px;width:45%;border:1px solid black;display:inline-block;" class="exile" data-bind="event:{
+    dragover: function(data, event){
+       event.preventDefault();
+    },
+    drop: function(data, event){
+       $root.moveCardToExile();
+       event.preventDefault();
+    }
+}">
+    <div data-bind="foreach: exile">
+        <div>
+            <span data-bind='text: name'></span>
+        </div>
+    </div>
+</div>
+
+<h3>My Hand: </h3>
+<div data-bind="foreach: hand">
+    <div class="draggable" draggable="true" data-bind="event:{
+        dragstart:   function(data, event){ 
+            $(event.target).addClass('dragSource');
+            $root.drag_start_index($index());
+            $root.drag_start_source('hand');
+            return $(event.target).hasClass('draggable');
+        },    
+  
+        dragend:   function(data, event){
+            $root.drag_start_index(-1);
+            $root.drag_start_source('');
+            $(event.target).removeClass('dragSource')
+            return true;
+        }
+    }">
+  
+          <span data-bind='text: name'></span>
+      </div>
+</div>
+
+<script src="/scripts/knockout-3.5.1.js"></script>
+<script src="/scripts/playtest.js"></script>
+
+<%- include('../partials/footer'); %>

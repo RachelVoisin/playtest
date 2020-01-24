@@ -71,6 +71,12 @@ router.get("/deck/edit", function(req, res){
 	res.render("deck/edit", {deckId: deckId});
 });
 
+// Load Play Testing Page
+router.get("/deck/playtest", function(req, res){
+	var deckId = req.query.deck;
+	res.render("deck/playtest", {deckId: deckId});
+});
+
 // Load Mass Add Page
 // middleware.checkDeckOwnership
 router.get("/deck/massadd/:id", function(req, res){

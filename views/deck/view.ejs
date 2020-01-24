@@ -9,7 +9,7 @@
         <h2><%= deck.name %></h2>
         <p><%= deck.format %></p>
         <p>Last Updated: <%= deck.dateUpdated %></p>
-        <p><a class="playtest-btn" href="<%= baseUrl %>/deck/playtest/<%= deck._id %>">Play Test</a></p>
+        <p><a class="playtest-btn" href="<%= baseUrl %>/deck/playtest?deck=<%= deck._id %>">Play Test</a></p>
     </div>
     <div class="header-overlay" style="background: linear-gradient(0deg, <%= deck.color %> 0%, rgba(255,255,255,0) 29%);"></div>
 </div>
