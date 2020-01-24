@@ -1,19 +1,30 @@
 <%- include('../partials/header'); %>
 
-<p><%= deck.name %></p>
-<p><%= deck.format %></p>
-<p><%= deck.dateUpdated %></p>
-<div style="width:15px;height:15px;background-color:<%= deck.color %>;"></div>
+<div class="deck-header">
+    <div class="deck-image-container">
+        <img src="<%= deck.image %>" onError="this.onerror=null;this.src='/images/placeholder.png';"/>
+        <div class="image-overlay"></div>
+    </div>
+    <div class="deck-text">
+        <h2><%= deck.name %></h2>
+        <p><%= deck.format %></p>
+        <p>Last Updated: <%= deck.dateUpdated %></p>
+    </div>
+    <div class="header-overlay" style="background: linear-gradient(0deg, <%= deck.color %> 0%, rgba(255,255,255,0) 29%);"></div>
+</div>
 
-<div>
+<div class="deck-sort-options">
+    <label>Sort By: </label>
     <select class="jsSort">
         <option value="type">type</option>
         <option value="cmc">cmc</option>
         <option value="color">color</option>
     </select>
 
-    <label>Overlap Categories: </label>
-    <input class="jsOverlap" type="checkbox" checked> 
+    <label for="jsOverlap" class="checkbox-label">
+        <input id="jsOverlap" class="jsOverlap" type="checkbox" checked>
+        <span>Overlap Categories: </span>
+    </label>
 </div>
 
 <div>
