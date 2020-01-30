@@ -125,6 +125,10 @@ function DeckViewModel() {
                     }
                 });
 
+                console.log(self.allCards().length);
+                // 98. why????
+                // print out the whole array and see what it is, I guess
+
                 self.restart();
             }
         },

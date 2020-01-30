@@ -62,7 +62,7 @@
 
     <div class="card-list-wrapper" data-bind="foreach: sortedCards">
         <div class="card-list-section">
-            <h3 class="card-list-subtitle" data-bind="text: subtitle"></h3>
+            <h3 class="card-list-subtitle" data-bind="text: subtitle"></h3><span data-bind="text: cards.length"></span>
             <div class="card-list" data-bind="foreach: cards">
                 <div class="card-row" data-bind="class: id">
                     <div>

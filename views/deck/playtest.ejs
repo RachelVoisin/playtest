@@ -17,8 +17,11 @@
 
 <div class="play-field" data-bind="event:{
     dragover: dragoverEvent,
+    dragenter: dragenterEvent,
+    dragleave: dragleaveEvent,
     drop: function(data, event){
        $root.moveCardToPlay();
+       $(event.target).removeClass('dragover');
        event.preventDefault();
     }
 }">
@@ -111,7 +114,7 @@
     </div>
 </div>
 
-
+<h3 class="hand-subtitle">Hand: </h3>
 <div class="lower-field-container">
     <div class="hand-container" data-bind="event:{
         dragover: dragoverEvent,
@@ -141,6 +144,8 @@
         optionsValue: 'id',
         optionsCaption: 'Tutor...'">
         </select>
+        <br><br>
+        <button data-bind="click: shuffle">Shuffle</button>
         <br><br>
         <button data-bind="click: restart">Restart</button>
     </div>

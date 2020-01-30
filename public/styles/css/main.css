@@ -404,10 +404,13 @@ form .submit-btn {
   width: auto; }
 
 .play-field {
-  height: 450px;
+  height: 500px;
   width: 100%;
   background: #D6D6D6;
-  position: relative; }
+  position: relative;
+  border: 1px solid #D6D6D6; }
+  .play-field.dragover {
+    border-color: #2C2B30; }
 
 .zone-container {
   display: flex;
@@ -421,7 +424,7 @@ form .submit-btn {
     margin-bottom: 0px; }
   .zone-container .deck {
     height: 200px;
-    width: 150px;
+    width: 145px;
     background-image: url("https://i.imgur.com/P7qYTcI.png");
     background-position: center;
     background-repeat: no-repeat;
@@ -430,7 +433,7 @@ form .submit-btn {
       opacity: 0.8; }
   .zone-container .graveyard, .zone-container .exile {
     height: 200px;
-    width: 150px;
+    width: 145px;
     border: 1px dashed #4F4F51; }
     .zone-container .graveyard.dragover, .zone-container .exile.dragover {
       border-color: white; }
@@ -446,12 +449,16 @@ form .submit-btn {
       text-align: center; }
 
 .dragSource {
-  opacity: 0.9; }
+  opacity: 0.8; }
+
+.hand-subtitle {
+  margin: 5px; }
 
 .lower-field-container {
   display: flex;
   margin-right: -0px;
-  margin-bottom: -0px; }
+  margin-bottom: -0px;
+  margin-left: 5px; }
   .lower-field-container > * {
     margin-right: 0px;
     margin-bottom: 0px; }

@@ -6,7 +6,12 @@
         <div class="image-overlay"></div>
     </div>
     <div class="deck-text">
-        <h2><%= deck.name %></h2>
+        <% var deckLength = 0;
+            sortedCards.forEach(function(section){
+                deckLength += section.total;
+            });
+        %>
+        <h2><%= deck.name %> - <%= deckLength %></h2>
         <p><%= deck.format %></p>
         <p>Last Updated: <%= deck.dateUpdated %></p>
         <p><a class="playtest-btn" href="<%= baseUrl %>/deck/playtest?deck=<%= deck._id %>">Play Test</a></p>
@@ -31,7 +36,7 @@
 <div class="card-list-wrapper">
     <% sortedCards.forEach(function(section){ %>
         <div class="card-list-section">
-            <h3 class="card-list-subtitle"><%= section.subtitle %></h3>
+            <h3 class="card-list-subtitle"><%= section.subtitle %> - <%= section.total %></h3>
             <div class="card-list">
                 <% section.cards.forEach(function(card){ %>
                     <div class="card-row">

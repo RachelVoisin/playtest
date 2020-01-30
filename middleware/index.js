@@ -45,7 +45,8 @@ middlewareObj.sortCardList = function(req, deck) {
         sorter.forEach(function(type) {
             var section = {
                 subtitle: type,
-                cards: []
+                cards: [],
+                total: 0
             };
             deck.deckCards.forEach(function(card) {
                 if (card.id.types.includes(type)) {
@@ -53,9 +54,11 @@ middlewareObj.sortCardList = function(req, deck) {
                         if (!usedCards.includes(card.id.oracleid)) {
                             usedCards.push(card.id.oracleid);
                             section.cards.push(card);
+                            section.total += card.number;
                         }
                     } else {
                         section.cards.push(card);
+                        section.total += card.number;
                     }
                 }
             });
