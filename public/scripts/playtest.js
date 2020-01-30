@@ -22,6 +22,7 @@ function DeckViewModel() {
 
     self.drag_start_index  = ko.observable();
     self.drag_start_source = ko.observable();
+    self.numToDraw         = ko.observable(1);
 
     self.shuffle = function() {
         var array = self.deck();
@@ -50,21 +51,65 @@ function DeckViewModel() {
     }
 
     self.moveCardToPlay = function() {
-        if (self.drag_start_source() == 'hand') {
-            self.inPlay.push(self.hand.splice(self.drag_start_index(), 1)[0]);
+        if (self.drag_start_source() != 'inPlay') {
+            self.inPlay.push(self[self.drag_start_source()].splice(self.drag_start_index(), 1)[0]);
+            self.inPlay()[self.inPlay().length - 1].tapped(false);
         }
     }
 
     self.moveCardToGraveyard = function() {
-        if (self.drag_start_source() == 'hand') {
-            self.graveyard.push(self.hand.splice(self.drag_start_index(), 1)[0]);
+        if (self.drag_start_source() != 'graveyard') {
+            self.graveyard.push(self[self.drag_start_source()].splice(self.drag_start_index(), 1)[0]);
         }
     }
 
     self.moveCardToExile = function() {
-        if (self.drag_start_source() == 'hand') {
-            self.exile.push(self.hand.splice(self.drag_start_index(), 1)[0]);
+        if (self.drag_start_source() != 'exile') {
+            self.exile.push(self[self.drag_start_source()].splice(self.drag_start_index(), 1)[0]);
         }
+    }
+
+    self.moveCardToHand = function() {
+        if (self.drag_start_source() != 'hand') {
+            self.hand.push(self[self.drag_start_source()].splice(self.drag_start_index(), 1)[0]);
+        }
+    }
+
+    self.moveCardToDeck = function() {
+        if (self.drag_start_source() != 'deck') {
+            self.deck.unshift(self[self.drag_start_source()].splice(self.drag_start_index(), 1)[0]);
+        }
+    }
+
+    self.drawNum = function() {
+        for(let i = 0; i < self.numToDraw(); i++) {
+            self.hand.push(self.deck.shift());
+        }
+
+        self.numToDraw(1);
+    }
+
+    self.tap = function (obj, e) {
+        obj.tapped(!obj.tapped());
+    }
+
+    self.dragenterEvent = function (obj, e) {
+        $(e.target).addClass('dragover');
+    }
+
+    self.dragleaveEvent = function (obj, e) {
+        $(e.target).removeClass('dragover');
+    }
+
+    self.dragoverEvent = function (obj, e) {
+        e.preventDefault();
+    }
+
+    self.dragendEvent = function (obj, e) {
+        self.drag_start_index(-1);
+        self.drag_start_source('');
+        $(e.target).removeClass('dragSource');
+        return true;
     }
 
     $.ajax({

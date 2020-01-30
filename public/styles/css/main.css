@@ -393,5 +393,85 @@ form .submit-btn {
   .new-deck-form > * {
     margin-bottom: 15px; }
 
+.tapped {
+  transform: rotate(90deg); }
+
+.in-play > div {
+  display: inline-block; }
+
+.in-play .card-element {
+  height: 200px;
+  width: auto; }
+
+.play-field {
+  height: 450px;
+  width: 100%;
+  background: #D6D6D6;
+  position: relative; }
+
+.zone-container {
+  display: flex;
+  margin-right: -15px;
+  margin-bottom: -0px;
+  position: absolute;
+  bottom: 25px;
+  right: 15px; }
+  .zone-container > * {
+    margin-right: 15px;
+    margin-bottom: 0px; }
+  .zone-container .deck {
+    height: 200px;
+    width: 150px;
+    background-image: url("https://i.imgur.com/P7qYTcI.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; }
+    .zone-container .deck.dragover {
+      opacity: 0.8; }
+  .zone-container .graveyard, .zone-container .exile {
+    height: 200px;
+    width: 150px;
+    border: 1px dashed #4F4F51; }
+    .zone-container .graveyard.dragover, .zone-container .exile.dragover {
+      border-color: white; }
+  .zone-container .deck, .zone-container .graveyard, .zone-container .exile {
+    position: relative; }
+    .zone-container .deck .zone-label, .zone-container .graveyard .zone-label, .zone-container .exile .zone-label {
+      position: absolute;
+      bottom: -1.3em;
+      margin: 0;
+      width: 100%;
+      color: #4F4F51;
+      font-size: 0.8em;
+      text-align: center; }
+
 .dragSource {
-  color: #D6D6D6; }
+  opacity: 0.9; }
+
+.lower-field-container {
+  display: flex;
+  margin-right: -0px;
+  margin-bottom: -0px; }
+  .lower-field-container > * {
+    margin-right: 0px;
+    margin-bottom: 0px; }
+  .lower-field-container .actions {
+    width: 150px; }
+    .lower-field-container .actions .draw-num-input {
+      width: 50%; }
+    .lower-field-container .actions .tutor-select {
+      width: 90%; }
+
+.hand-container {
+  display: flex;
+  margin-right: -5px;
+  margin-bottom: -10px;
+  flex-wrap: wrap;
+  flex-grow: 1; }
+  .hand-container > * {
+    margin-right: 5px;
+    margin-bottom: 10px; }
+  .hand-container .card-element {
+    display: block;
+    max-height: 150px;
+    width: auto; }

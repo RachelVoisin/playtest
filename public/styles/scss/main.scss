@@ -66,6 +66,102 @@ form {
     }
 }
 
-.dragSource {
-    color: $light;
+.tapped {
+    transform: rotate(90deg);
 }
+
+.in-play {
+    > div {
+        display: inline-block;
+    }
+
+    .card-element {
+        height: 200px;
+        width: auto;
+    }
+}
+
+.play-field {
+    height: 450px;
+    width: 100%;
+    background: $light;
+    position: relative;
+}
+
+.zone-container {
+    @include grid($column-gap: 15px);
+    position: absolute;
+    bottom: 25px;
+    right: 15px;
+
+    .deck {
+        height: 200px;
+        width: 150px;
+        background-image: url('https://i.imgur.com/P7qYTcI.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        &.dragover {
+            opacity: 0.8;
+        }
+    }
+
+    .graveyard, .exile {
+        height: 200px;
+        width: 150px;
+        border: 1px dashed $medium; 
+
+        &.dragover {
+            border-color: white;
+        }
+    }
+
+    .deck, .graveyard, .exile {
+        position: relative;
+
+        .zone-label {
+            position: absolute;
+            bottom: -1.3em;
+            margin: 0;
+            width: 100%;
+            color: $medium;
+            font-size: 0.8em;
+            text-align: center;
+        }
+    }
+}
+
+.dragSource {
+    opacity: 0.9;
+}
+
+.lower-field-container {
+    @include grid;
+
+    .actions {
+        width: 150px;
+
+        .draw-num-input {
+            width: 50%;
+        }
+
+        .tutor-select {
+            width: 90%;
+        }
+    }
+}
+
+.hand-container {
+    @include grid($column-gap: 5px, $row-gap: 10px);
+    flex-wrap: wrap;
+    flex-grow: 1;
+
+    .card-element {
+        display: block;
+        max-height: 150px;
+        width: auto;
+    }
+}
+
+

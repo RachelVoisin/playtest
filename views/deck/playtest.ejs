@@ -1,75 +1,149 @@
-<%- include('../partials/header'); %>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf=8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Play Test</title>
 
-<button data-bind="click: restart">Restart</button>
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700|Roboto:300,400,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/styles/css/main.css">
+	
+	<script
+	src="https://code.jquery.com/jquery-3.4.1.min.js"
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+	crossorigin="anonymous"></script>
+</head>
+<body>
 
-<div style="height:300px;width:100%;border:1px solid black;" class="play-field" data-bind="event:{
-    dragover: function(data, event){
-       event.preventDefault();
-    },
+<div class="play-field" data-bind="event:{
+    dragover: dragoverEvent,
     drop: function(data, event){
        $root.moveCardToPlay();
        event.preventDefault();
     }
 }">
     <div class="in-play" data-bind="foreach: inPlay">
-        <div>
-            <span data-bind='text: name'></span>
+        <div data-bind="
+        click: $root.tap,
+        css: { tapped: tapped }">
+            <img class="draggable card-element" draggable="true" data-bind="attr: { src: image, alt: name },
+            event:{
+                dragstart:   function(data, event){ 
+                    $(event.target).addClass('dragSource');
+                    $root.drag_start_index($index());
+                    $root.drag_start_source('inPlay');
+                    return $(event.target).hasClass('draggable');
+                },    
+                dragend: $root.dragendEvent
+            }">
+        </div>
+    </div>
+    <div class="zone-container">
+        <div class="deck draggable" draggable="true" data-bind="event:{
+            dragover: dragoverEvent,
+            dragenter: dragenterEvent,
+            dragleave: dragleaveEvent,
+            drop: function(data, event){
+               $root.moveCardToDeck();
+               $(event.target).removeClass('dragover');
+               event.preventDefault();
+            },
+            dragstart: function(data, event){ 
+                $(event.target).addClass('dragSource');
+                $root.drag_start_index(0);
+                $root.drag_start_source('deck');
+                return $(event.target).hasClass('draggable');
+            },    
+            dragend: $root.dragendEvent
+        }">
+            <p class="zone-label">Deck - <span data-bind="text: $root.deck().length"></span></p>
+        </div>
+        <div class="graveyard" data-bind="event:{
+            dragover: dragoverEvent,
+            dragenter: dragenterEvent,
+            dragleave: dragleaveEvent,
+            drop: function(data, event){
+               $root.moveCardToGraveyard();
+               $(event.target).removeClass('dragover');
+               event.preventDefault();
+            }
+        }">
+            <div data-bind="foreach: graveyard">
+                <div class="draggable" draggable="true" data-bind="event:{
+                    dragstart:   function(data, event){ 
+                        $(event.target).addClass('dragSource');
+                        $root.drag_start_index($index());
+                        $root.drag_start_source('graveyard');
+                        return $(event.target).hasClass('draggable');
+                    },    
+                    dragend: $root.dragendEvent
+                }">
+                    <span data-bind='text: name'></span>
+                </div>
+            </div>
+            <p class="zone-label">Graveyard - <span data-bind="text: $root.graveyard().length"></span></p>
+        </div>
+        <div class="exile" data-bind="event:{
+            dragover: dragoverEvent,
+            dragenter: dragenterEvent,
+            dragleave: dragleaveEvent,
+            drop: function(data, event){
+               moveCardToExile();
+               $(event.target).removeClass('dragover');
+               event.preventDefault();
+            }
+        }">
+            <div data-bind="foreach: exile">
+                <div class="draggable" draggable="true" data-bind="event:{
+                    dragstart:   function(data, event){ 
+                        $(event.target).addClass('dragSource');
+                        $root.drag_start_index($index());
+                        $root.drag_start_source('exile');
+                        return $(event.target).hasClass('draggable');
+                    },    
+                    dragend: $root.dragendEvent
+                }">
+                    <span data-bind='text: name'></span>
+                </div>
+            </div>
+            <p class="zone-label">Exile - <span data-bind="text: $root.exile().length"></span></p>
         </div>
     </div>
 </div>
 
-<div style="height:300px;width:45%;border:1px solid black;display:inline-block;" class="graveyard" data-bind="event:{
-    dragover: function(data, event){
-       event.preventDefault();
-    },
-    drop: function(data, event){
-       $root.moveCardToGraveyard();
-       event.preventDefault();
-    }
-}">
-    <div data-bind="foreach: graveyard">
-        <div>
-            <span data-bind='text: name'></span>
-        </div>
-    </div>
-</div>
 
-<div style="height:300px;width:45%;border:1px solid black;display:inline-block;" class="exile" data-bind="event:{
-    dragover: function(data, event){
-       event.preventDefault();
-    },
-    drop: function(data, event){
-       $root.moveCardToExile();
-       event.preventDefault();
-    }
-}">
-    <div data-bind="foreach: exile">
-        <div>
-            <span data-bind='text: name'></span>
-        </div>
-    </div>
-</div>
-
-<h3>My Hand: </h3>
-<div data-bind="foreach: hand">
-    <div class="draggable" draggable="true" data-bind="event:{
-        dragstart:   function(data, event){ 
-            $(event.target).addClass('dragSource');
-            $root.drag_start_index($index());
-            $root.drag_start_source('hand');
-            return $(event.target).hasClass('draggable');
-        },    
-  
-        dragend:   function(data, event){
-            $root.drag_start_index(-1);
-            $root.drag_start_source('');
-            $(event.target).removeClass('dragSource')
-            return true;
+<div class="lower-field-container">
+    <div class="hand-container" data-bind="event:{
+        dragover: dragoverEvent,
+        drop: function(data, event){
+        $root.moveCardToHand();
+        event.preventDefault();
         }
-    }">
-  
-          <span data-bind='text: name'></span>
-      </div>
+    }, foreach: hand">
+        <img class="draggable card-element" draggable="true" data-bind="attr: { src: image, alt: name },
+        event:{
+            dragstart:   function(data, event){ 
+                $(event.target).addClass('dragSource');
+                $root.drag_start_index($index());
+                $root.drag_start_source('hand');
+                return $(event.target).hasClass('draggable');
+            },    
+            dragend: $root.dragendEvent
+        }">
+        </img>
+    </div>
+    <div class="actions">
+        <button data-bind="click: drawNum">Draw</button>
+        <input class="draw-num-input" type="number" data-bind="value: numToDraw">
+        <br><br>
+        <select class="tutor-select" data-bind="options: deck, 
+        optionsText: 'name', 
+        optionsValue: 'id',
+        optionsCaption: 'Tutor...'">
+        </select>
+        <br><br>
+        <button data-bind="click: restart">Restart</button>
+    </div>
 </div>
 
 <script src="/scripts/knockout-3.5.1.js"></script>
